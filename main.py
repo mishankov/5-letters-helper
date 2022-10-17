@@ -1,22 +1,36 @@
+DEBUG = False
+
+def log(*args):
+    if DEBUG:
+        print(*args)
+
+
 def filter_words(unwanted_letters: list[str], letters_position: list[str], amount_of_letters: dict[str, int], wrong_positions: dict[int, list[str]]):
     def inner(word: str):
+        log(f"Начал проверять слово {word}")
         for letter in unwanted_letters:
             if letter in word:
+                log(f"В слове {word} есть буква {letter}")
                 return False
 
         for letter, position in zip(letters_position, range(0, 5)):
             if letter != "_":
                 if word[position] != letter:
+                    log(f"В слове {word} на позиции {position} не буква {letter}")
                     return False
 
         for letter, amount in amount_of_letters.items():
             if word.count(letter) < amount:
+                log(f"В слове {word} буквы {letter} меньше минимального количества {amount}")
                 return False
 
         for position, letters in wrong_positions.items():
             for letter in letters:
                 if word[position] == letter:
+                    log(f"В слове {word} на позиции {position} буква {letter}")
                     return False
+        
+        log(f"Слово {word} подходит под текущие ограничения")
         
         return True
 
@@ -61,12 +75,20 @@ if __name__ == "__main__":
 
                 case "2": letters_position[position] = letter
 
-        for letter, amount in local_amount_of_letters.items():
-            if letter in amount_of_letters.keys() and amount_of_letters[letter] < amount:
-                amount_of_letters[letter] += amount
-            else:
-                amount_of_letters[letter] = amount
 
+        for letter, amount in local_amount_of_letters.items():
+            if letter in amount_of_letters.keys() and amount_of_letters[letter] < amount or letter not in amount_of_letters.keys():
+                amount_of_letters[letter] = amount
+        
+        for letter in unwanted_letters:
+            if letter in amount_of_letters.keys():
+                unwanted_letters = [value for value in unwanted_letters if value != letter]
+
+        log("unwanted_letters", unwanted_letters)
+        log("letters_position", letters_position)
+        log("amount_of_letters", amount_of_letters)
+        log("wrong_positions", wrong_positions)
+        
         remaining_variants = list(filter(filter_words(unwanted_letters, letters_position, amount_of_letters, wrong_positions), remaining_variants))
 
         if len(remaining_variants) == 1:
