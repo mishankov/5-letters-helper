@@ -70,7 +70,7 @@ if __name__ == "__main__":
         remaining_variants = list(filter(filter_words(unwanted_letters, letters_position, amount_of_letters, wrong_positions), remaining_variants))
 
         if len(remaining_variants) == 1:
-            print(f"\nЗагаданное: {remaining_variants[0]}. Игра окончена!")
+            print(f"\nЗагаданное слово: {remaining_variants[0]}. Игра окончена!")
             break
 
         print("============================\n\n")
