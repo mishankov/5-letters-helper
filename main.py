@@ -81,7 +81,7 @@ if __name__ == "__main__":
                 amount_of_letters[letter] = amount
         
         for letter in unwanted_letters:
-            if letter in amount_of_letters.keys():
+            if letter in amount_of_letters.keys() or letter in letters_position:
                 unwanted_letters = [value for value in unwanted_letters if value != letter]
 
         log("unwanted_letters", unwanted_letters)
