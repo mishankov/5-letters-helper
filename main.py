@@ -38,7 +38,7 @@ def filter_words(unwanted_letters: list[str], letters_position: list[str], amoun
 
 
 if __name__ == "__main__":
-    f = open("./data/five_letters_russian_nouns.txt")
+    f = open("./data/five_letters_russian_nouns.txt", encoding="utf-8")
     remaining_variants = list(map(lambda x: x.replace("\n", ""), f.readlines()))
     f.close() 
 
