@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/fs"
 	"log"
 	"os"
 	"strings"
@@ -21,7 +22,7 @@ func main() {
 		}
 	}
 
-	errSave := os.WriteFile("./data/five_letters_russian_nouns.txt", []byte(fiveLettersWords), 0644)
+	errSave := os.WriteFile("./data/five_letters_russian_nouns.txt", []byte(fiveLettersWords), fs.ModeExclusive)
 	if errSave != nil {
 		log.Panic(errSave)
 	}
