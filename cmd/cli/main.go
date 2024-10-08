@@ -4,6 +4,8 @@ import (
 	"fiveLettersHelper/internal/db"
 	"fiveLettersHelper/internal/game"
 	"fiveLettersHelper/internal/user"
+	"fiveLettersHelper/internal/words"
+	"fmt"
 	"log"
 )
 
@@ -24,5 +26,20 @@ func main() {
 		log.Fatal("Error creating new game:", err)
 	}
 
-	log.Println("Game created with id:", game.Id)
+	words, err := words.GetFiveLettersWords()
+
+	if err != nil {
+		log.Fatal("Error getting words from file:", err)
+	}
+
+	turnNumber := 0
+	game.InProgress()
+	for {
+		turnNumber++
+		fmt.Printf("Ход №: %v\n", turnNumber)
+		fmt.Printf("Осталось %v слов для выбора\n", len(words))
+		break
+	}
+
+	game.Cancel()
 }

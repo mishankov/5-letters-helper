@@ -21,3 +21,18 @@ func NewGame(user string, db *sql.DB) (Game, error) {
 
 	return Game{Id: uuid.NewString(), User: user, Status: "new"}, nil
 }
+
+func (g *Game) InProgress() {
+	g.Status = "in progress"
+	// TODO: запись в БД
+}
+
+func (g *Game) Complete() {
+	g.Status = "completed"
+	// TODO: запись в БД
+}
+
+func (g *Game) Cancel() {
+	g.Status = "canceled"
+	// TODO: запись в БД
+}
