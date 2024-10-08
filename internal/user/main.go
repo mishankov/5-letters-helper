@@ -13,6 +13,7 @@ type User struct {
 }
 
 func NewCLIUser(db *sql.DB) User {
+	// TODO: insert does not work
 	user := User{Id: uuid.NewString(), Type: "cli"}
 	db.Exec("INSERT INTO user (id, type) VALUES (?, ? ,?)", user.Id, user.Type)
 	return user
