@@ -1,16 +1,14 @@
 package main
 
 import (
-	"database/sql"
+	"fiveLettersHelper/internal/db"
 	"fiveLettersHelper/internal/game"
 	"fiveLettersHelper/internal/user"
 	"log"
-
-	_ "github.com/glebarez/go-sqlite"
 )
 
 func main() {
-	db, err := sql.Open("sqlite", "./fiveLettersHelp.db")
+	db, err := db.GetDB()
 	if err != nil {
 		log.Fatal("Can't open database:", err)
 	}
