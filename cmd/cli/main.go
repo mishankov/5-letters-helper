@@ -16,7 +16,11 @@ func main() {
 	}
 	defer db.Close()
 
-	user := user.CreateAndGetCLIUser(db)
+	user, err := user.CreateAndGetCLIUser(db)
+	if err != nil {
+		log.Fatal("Error creating new user: ", err)
+	}
+
 	game, err := game.NewGame(user.Id, db)
 	if err != nil {
 		log.Fatal("Error creating new game: ", err)
