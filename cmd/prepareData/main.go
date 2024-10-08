@@ -1,19 +1,17 @@
 package main
 
 import (
+	"fiveLettersHelper/internal/words"
 	"io/fs"
 	"log"
 	"os"
-	"strings"
 )
 
 func main() {
-	originalData, errOpen := os.ReadFile("./data/russian_nouns.txt")
-	if errOpen != nil {
-		log.Panic(errOpen)
+	words, err := words.GetAllWords()
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	words := strings.Split(string(originalData), "\r\n")
 
 	var fiveLettersWords string
 	for _, word := range words {
