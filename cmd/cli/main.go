@@ -4,7 +4,7 @@ import (
 	"fiveLettersHelper/internal/db"
 	"fiveLettersHelper/internal/game"
 	"fiveLettersHelper/internal/user"
-	"fiveLettersHelper/internal/words"
+	wordsUtils "fiveLettersHelper/internal/words"
 	"fiveLettersHelper/packages/cliUtils"
 	"fmt"
 	"log"
@@ -28,7 +28,7 @@ func main() {
 		log.Fatal("Error creating new game:", err)
 	}
 
-	words, err := words.GetFiveLettersWords()
+	words, err := wordsUtils.GetFiveLettersWords()
 
 	if err != nil {
 		log.Fatal("Error getting words from file:", err)
@@ -44,7 +44,7 @@ func main() {
 		turnNumber++
 		fmt.Printf("Ход №: %v\n", turnNumber)
 		// TODO: format lists output better
-		fmt.Printf("Осталось %v слов для выбора. Первые из них: %v\n", len(words), words[:10])
+		fmt.Printf("Осталось %v слов для выбора. Первые из них: %v\n", len(words), words[:min(len(words), 10)])
 		fmt.Printf("Известные положения букв: %q\n", letterPositions)
 		fmt.Printf("Неиспользуемые буквы: %q\n", unwantedLetters)
 
@@ -94,9 +94,24 @@ func main() {
 			}
 		}
 
-		if turnNumber == 2 {
+		newWords := []string{}
+
+		for _, word := range words {
+			if len(word) == 0 {
+				continue
+			}
+
+			if wordsUtils.WordRemains(word, unwantedLetters, letterPositions, amountOfLetters, wrongPositions) {
+				newWords = append(newWords, word)
+			}
+		}
+
+		if len(newWords) == 1 {
+			log.Printf("Game over. Word is: %v\n", newWords[0])
 			break
 		}
+
+		words = newWords
 	}
 
 	// TODO: cancel game if error or exit

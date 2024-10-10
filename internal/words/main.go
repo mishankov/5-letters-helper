@@ -31,7 +31,7 @@ func WordRemains(word string, unwantedLetters []rune, letterPositions []rune, am
 	}
 
 	for index, letter := range letterPositions {
-		if letter != '_' && word[index] != byte(letter) {
+		if letter != '_' && []rune(word)[index] != letter {
 			return false
 		}
 	}
@@ -43,8 +43,8 @@ func WordRemains(word string, unwantedLetters []rune, letterPositions []rune, am
 	}
 
 	for position, letters := range wrongPositions {
-		for letter := range letters {
-			if word[position] == byte(letter) {
+		for _, letter := range letters {
+			if []rune(word)[position] == letter {
 				return false
 			}
 		}
