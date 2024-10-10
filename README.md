@@ -4,7 +4,13 @@
 
 ```shell
 # Подготовка 5-ти буквенных существительных
-go run ./cmd/prepareData
+go run ./cmd/prepareWords
+
+# Подготовка БД
+go run ./cmd/prepareDb
+
+# Запуск консольного приложения
+go run ./cmd/cli
 ```
 
 

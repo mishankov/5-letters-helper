@@ -3,6 +3,7 @@ package main
 import (
 	"fiveLettersHelper/internal/db"
 	"fiveLettersHelper/internal/game"
+	"fiveLettersHelper/internal/guess"
 	"fiveLettersHelper/internal/user"
 	wordsUtils "fiveLettersHelper/internal/words"
 	"fiveLettersHelper/packages/cliUtils"
@@ -108,6 +109,11 @@ func main() {
 			if wordsUtils.WordRemains(word, unwantedLetters, letterPositions, amountOfLetters, wrongPositions) {
 				newWords = append(newWords, word)
 			}
+		}
+
+		_, err = guess.NewGuess(game.Id, turnNumber, word, result, db)
+		if err != nil {
+			log.Fatal("Error creating guess:", err)
 		}
 
 		if len(newWords) == 1 {
