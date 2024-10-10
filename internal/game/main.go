@@ -2,6 +2,7 @@ package game
 
 import (
 	"database/sql"
+	"log"
 
 	"github.com/google/uuid"
 )
@@ -28,11 +29,18 @@ func (g *Game) InProgress() {
 }
 
 func (g *Game) Complete() {
-	g.Status = "completed"
-	// TODO: запись в БД
+	if g.Status != "cancelled" && g.Status != "completed" {
+		g.Status = "completed"
+		// TODO: запись в БД
+		log.Printf("Game %v completed\n", g.Id)
+	}
+
 }
 
 func (g *Game) Cancel() {
-	g.Status = "canceled"
-	// TODO: запись в БД
+	if g.Status != "cancelled" && g.Status != "completed" {
+		g.Status = "canceled"
+		// TODO: запись в БД
+		log.Printf("Game %v cancelled\n", g.Id)
+	}
 }
