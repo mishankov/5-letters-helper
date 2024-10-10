@@ -34,12 +34,16 @@ func main() {
 		log.Fatal("Error getting words from file:", err)
 	}
 
+	err = game.InProgress(db)
+	if err != nil {
+		log.Fatal("Error setting game status to 'in progress':", err)
+	}
+
 	turnNumber := 0
 	letterPositions := []rune{'_', '_', '_', '_', '_'}
 	unwantedLetters := []rune{}
 	wrongPositions := map[int][]rune{}
 	amountOfLetters := map[rune]int{}
-	game.InProgress()
 	for {
 		turnNumber++
 		fmt.Printf("Ход №: %v\n", turnNumber)
@@ -107,13 +111,19 @@ func main() {
 		}
 
 		if len(newWords) == 1 {
-			log.Printf("Game over. Word is: %v\n", newWords[0])
+			fmt.Printf("Игра закончена. Загаданное слово: %v\n", newWords[0])
+			err = game.Complete(db)
+			if err != nil {
+				log.Fatal("Error setting game status to 'complete':", err)
+			}
 			break
 		}
 
 		words = newWords
 	}
 
-	// TODO: cancel game if error or exit
-	game.Cancel()
+	err = game.Cancel(db)
+	if err != nil {
+		log.Fatal("Error setting game status to 'cancel':", err)
+	}
 }

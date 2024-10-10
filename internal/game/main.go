@@ -2,7 +2,6 @@ package game
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/google/uuid"
 )
@@ -20,27 +19,30 @@ func NewGame(user string, db *sql.DB) (Game, error) {
 		return Game{}, err
 	}
 
-	return Game{Id: uuid.NewString(), User: user, Status: "new"}, nil
+	return game, nil
 }
 
-func (g *Game) InProgress() {
+func (g *Game) InProgress(db *sql.DB) error {
 	g.Status = "in progress"
-	// TODO: запись в БД
+	_, err := db.Exec("UPDATE game SET status = ? WHERE id = ?", g.Status, g.Id)
+	return err
 }
 
-func (g *Game) Complete() {
+func (g *Game) Complete(db *sql.DB) error {
 	if g.Status != "cancelled" && g.Status != "completed" {
 		g.Status = "completed"
-		// TODO: запись в БД
-		log.Printf("Game %v completed\n", g.Id)
+		_, err := db.Exec("UPDATE game SET status = ? WHERE id = ?", g.Status, g.Id)
+		return err
 	}
-
+	return nil
 }
 
-func (g *Game) Cancel() {
+func (g *Game) Cancel(db *sql.DB) error {
 	if g.Status != "cancelled" && g.Status != "completed" {
 		g.Status = "canceled"
-		// TODO: запись в БД
-		log.Printf("Game %v cancelled\n", g.Id)
+		_, err := db.Exec("UPDATE game SET status = ? WHERE id = ?", g.Status, g.Id)
+		return err
 	}
+
+	return nil
 }
