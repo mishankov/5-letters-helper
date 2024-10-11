@@ -5,6 +5,7 @@ go 1.23.0
 require (
 	github.com/glebarez/go-sqlite v1.22.0
 	github.com/google/uuid v1.6.0
+	github.com/mishankov/go-utlz v0.0.1
 )
 
 require (

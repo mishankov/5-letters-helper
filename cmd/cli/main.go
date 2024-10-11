@@ -5,10 +5,11 @@ import (
 	"fiveLettersHelper/internal/game"
 	"fiveLettersHelper/internal/user"
 	wordsUtils "fiveLettersHelper/internal/words"
-	"fiveLettersHelper/packages/cliUtils"
 	"fmt"
 	"log"
 	"slices"
+
+	"github.com/mishankov/go-utlz/cliutils"
 )
 
 func main() {
@@ -51,7 +52,7 @@ func main() {
 
 		var word string
 		for ok := false; !ok; {
-			word, err = cliUtils.UserInput("Введи слово: ")
+			word, err = cliutils.UserInput("Введи слово: ")
 			if err != nil {
 				log.Fatal("Error getting word from user:", err)
 			}
@@ -65,7 +66,7 @@ func main() {
 
 		var result string
 		for ok := false; !ok; {
-			result, err = cliUtils.UserInput("Введи результат (0, 1, 2): ")
+			result, err = cliutils.UserInput("Введи результат (0, 1, 2): ")
 			if err != nil {
 				log.Fatal("Error getting result from user:", err)
 			}
@@ -108,15 +109,15 @@ func main() {
 				log.Fatal("Error setting game status to 'complete':", err)
 			}
 
-			cliUtils.UserInput("Нажми ENTER, чтобы закрыть окно...")
+			cliutils.UserInput("Нажми ENTER, чтобы закрыть окно...")
 			break
 		}
 
 		words = newWords
 
-		fmt.Printf("Осталось %v слов для выбора. Первые из них: %v\n", len(words), cliUtils.FormatListWithSeparator(words[:min(len(words), 10)], ", "))
-		fmt.Printf("Известные положения букв: %v\n", cliUtils.FormatListWithSeparator(additionalResults.LetterPositions, " "))
-		fmt.Printf("Неиспользуемые буквы: %v\n", cliUtils.FormatListWithSeparator(additionalResults.UnwantedLetters, ", "))
+		fmt.Printf("Осталось %v слов для выбора. Первые из них: %v\n", len(words), cliutils.FormatListWithSeparator(words[:min(len(words), 10)], ", "))
+		fmt.Printf("Известные положения букв: %v\n", cliutils.FormatListWithSeparator(additionalResults.LetterPositions, " "))
+		fmt.Printf("Неиспользуемые буквы: %v\n", cliutils.FormatListWithSeparator(additionalResults.UnwantedLetters, ", "))
 	}
 
 	err = game.Cancel(db)
