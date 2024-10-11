@@ -8,6 +8,7 @@ import (
 	"fiveLettersHelper/packages/cliUtils"
 	"fmt"
 	"log"
+	"slices"
 )
 
 func main() {
@@ -48,16 +49,46 @@ func main() {
 		turnNumber++
 		fmt.Printf("Ход №: %v\n", turnNumber)
 
-		// TODO: validate user input
-		word, err := cliUtils.UserInput("Введи слово: ")
-		if err != nil {
-			log.Fatal("Error getting word from user:", err)
+		var word string
+		for ok := false; !ok; {
+			word, err = cliUtils.UserInput("Введи слово: ")
+			if err != nil {
+				log.Fatal("Error getting word from user:", err)
+			}
+
+			if len([]rune(word)) != 5 {
+				fmt.Printf("В слове должно быть 5 букв. В слове %q их %v. Попробуй ещё раз\n", word, len([]rune(word)))
+			} else {
+				ok = true
+			}
 		}
 
-		// TODO: validate user input
-		result, err := cliUtils.UserInput("Введи результат (0, 1, 2): ")
-		if err != nil {
-			log.Fatal("Error getting result from user:", err)
+		var result string
+		for ok := false; !ok; {
+			result, err = cliUtils.UserInput("Введи результат (0, 1, 2): ")
+			if err != nil {
+				log.Fatal("Error getting result from user:", err)
+			}
+
+			if len([]rune(result)) != 5 {
+				fmt.Printf("В результате должно быть 5 символов. В результате %q их %v. Попробуй ещё раз\n", result, len([]rune(result)))
+				continue
+			}
+
+			continueOuter := false
+			for i, r := range result {
+				if !slices.Contains([]rune{'0', '1', '2'}, r) {
+					fmt.Printf("В результате должно быть только символы 0, 1 и 2. На %v позиции находится символ %q. Попробуй ещё раз\n", i+1, r)
+					continueOuter = true
+					break
+				}
+			}
+
+			if continueOuter {
+				continue
+			}
+
+			ok = true
 		}
 
 		_, err = game.NewGuess(turnNumber, word, result, db)
