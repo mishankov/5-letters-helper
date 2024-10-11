@@ -108,7 +108,10 @@ func (g *Game) FilterWords(words []string, db *sql.DB) (filteredWords []string, 
 
 		for i, letter := range unwantedLetters {
 			if _, ok := amountOfLetters[letter]; ok || slices.Contains(letterPositions, letter) {
-				unwantedLetters[i] = unwantedLetters[len(unwantedLetters)-1]
+				if i < len(unwantedLetters) {
+					unwantedLetters[i] = unwantedLetters[len(unwantedLetters)-1]
+				}
+
 				unwantedLetters = unwantedLetters[:len(unwantedLetters)-1]
 			}
 		}
