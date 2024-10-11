@@ -7,12 +7,11 @@ import (
 )
 
 type Guess struct {
-	Id                       string
-	Game                     string
-	Number                   int
-	Word                     string
-	Result                   string
-	RemainingWordsAfterGuess []string
+	Id     string
+	Game   string
+	Number int
+	Word   string
+	Result string
 }
 
 func NewGuess(game string, number int, word string, result string, db *sql.DB) (Guess, error) {
@@ -23,4 +22,24 @@ func NewGuess(game string, number int, word string, result string, db *sql.DB) (
 	}
 
 	return guess, nil
+}
+
+func GetGuesseForGame(game string, db *sql.DB) ([]Guess, error) {
+	guesses := []Guess{}
+
+	rows, err := db.Query("SELECT id, game, number, word, result FROM guess WHERE game = ? ORDER BY number", game)
+	if err != nil {
+		return []Guess{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		guess := Guess{}
+		if err := rows.Scan(&guess.Id, &guess.Game, &guess.Number, &guess.Word, &guess.Result); err != nil {
+			return []Guess{}, err
+		}
+		guesses = append(guesses, guess)
+	}
+
+	return guesses, nil
 }

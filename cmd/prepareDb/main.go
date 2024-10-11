@@ -35,7 +35,6 @@ CREATE TABLE IF NOT EXISTS "guess" (
 	"number" NUMERIC NOT NULL,
 	"word" TEXT,
 	"result" TEXT,
-	"remaining_words_after_guess" BLOB,
 	PRIMARY KEY("id"),
 	FOREIGN KEY ("game") REFERENCES "game"("id")
 	ON UPDATE NO ACTION ON DELETE NO ACTION
