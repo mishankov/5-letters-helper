@@ -83,10 +83,9 @@ func main() {
 
 		words = newWords
 
-		// TODO: format lists output better
-		fmt.Printf("Осталось %v слов для выбора. Первые из них: %v\n", len(words), words[:min(len(words), 10)])
-		fmt.Printf("Известные положения букв: %q\n", additionalResults.LetterPositions)
-		fmt.Printf("Неиспользуемые буквы: %q\n", additionalResults.UnwantedLetters)
+		fmt.Printf("Осталось %v слов для выбора. Первые из них: %v\n", len(words), cliUtils.FormatListWithSeparator(words[:min(len(words), 10)], ", "))
+		fmt.Printf("Известные положения букв: %v\n", cliUtils.FormatListWithSeparator(additionalResults.LetterPositions, " "))
+		fmt.Printf("Неиспользуемые буквы: %v\n", cliUtils.FormatListWithSeparator(additionalResults.UnwantedLetters, ", "))
 	}
 
 	err = game.Cancel(db)

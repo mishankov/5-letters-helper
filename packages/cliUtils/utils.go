@@ -21,3 +21,15 @@ func UserInput(promt string) (string, error) {
 	return strings.TrimSpace(input), err
 
 }
+
+func FormatListWithSeparator[T string | rune](l []T, sep string) string {
+	if len(l) == 0 {
+		return ""
+	}
+
+	r := string(l[0])
+	for _, el := range l[1:] {
+		r += sep + string(el)
+	}
+	return r
+}
