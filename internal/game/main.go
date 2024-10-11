@@ -128,5 +128,7 @@ func (g *Game) FilterWords(words []string, db *sql.DB) (filteredWords []string, 
 		words = newWords
 	}
 
+	slices.Sort(unwantedLetters)
+
 	return words, FWAdditionalResults{LetterPositions: letterPositions, UnwantedLetters: unwantedLetters, WrongPositions: wrongPositions, AmountOfLetters: amountOfLetters}, nil
 }
