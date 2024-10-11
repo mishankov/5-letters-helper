@@ -2,6 +2,7 @@ package guess
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -16,7 +17,7 @@ type Guess struct {
 
 func NewGuess(game string, number int, word string, result string, db *sql.DB) (Guess, error) {
 	guess := Guess{Id: uuid.NewString(), Game: game, Number: number, Word: word, Result: result}
-	_, err := db.Exec("INSERT INTO guess (id, game, number, word, result) VALUES (?, ?, ?, ?, ?)", guess.Id, guess.Game, guess.Number, guess.Word, guess.Result)
+	_, err := db.Exec("INSERT INTO guess (id, game, number, word, result, created) VALUES (?, ?, ?, ?, ?, ?)", guess.Id, guess.Game, guess.Number, guess.Word, guess.Result, time.Now())
 	if err != nil {
 		return Guess{}, err
 	}

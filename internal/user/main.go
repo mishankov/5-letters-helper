@@ -2,6 +2,7 @@ package user
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -14,7 +15,7 @@ type User struct {
 
 func NewCLIUser(db *sql.DB) (User, error) {
 	user := User{Id: uuid.NewString(), Type: "cli"}
-	_, err := db.Exec("INSERT INTO user (id, type) VALUES (?, ?)", user.Id, user.Type)
+	_, err := db.Exec("INSERT INTO user (id, type, created) VALUES (?, ?, ?)", user.Id, user.Type, time.Now())
 	if err != nil {
 		return User{}, err
 	}

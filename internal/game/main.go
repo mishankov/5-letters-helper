@@ -6,6 +6,7 @@ import (
 	wordsUtils "fiveLettersHelper/internal/words"
 	"log"
 	"slices"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -18,7 +19,7 @@ type Game struct {
 
 func NewGame(user string, db *sql.DB) (Game, error) {
 	game := Game{Id: uuid.NewString(), User: user, Status: "new"}
-	_, err := db.Exec("INSERT INTO game (id, user, status) VALUES (?, ? ,?)", game.Id, game.User, game.Status)
+	_, err := db.Exec("INSERT INTO game (id, user, status, created) VALUES (?, ?, ?, ?)", game.Id, game.User, game.Status, time.Now())
 	if err != nil {
 		return Game{}, err
 	}
@@ -28,14 +29,14 @@ func NewGame(user string, db *sql.DB) (Game, error) {
 
 func (g *Game) InProgress(db *sql.DB) error {
 	g.Status = "in progress"
-	_, err := db.Exec("UPDATE game SET status = ? WHERE id = ?", g.Status, g.Id)
+	_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE id = ?", g.Status, time.Now(), g.Id)
 	return err
 }
 
 func (g *Game) Complete(db *sql.DB) error {
 	if g.Status != "cancelled" && g.Status != "completed" {
 		g.Status = "completed"
-		_, err := db.Exec("UPDATE game SET status = ? WHERE id = ?", g.Status, g.Id)
+		_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE id = ?", g.Status, time.Now(), g.Id)
 		return err
 	}
 	return nil
@@ -44,7 +45,7 @@ func (g *Game) Complete(db *sql.DB) error {
 func (g *Game) Cancel(db *sql.DB) error {
 	if g.Status != "cancelled" && g.Status != "completed" {
 		g.Status = "canceled"
-		_, err := db.Exec("UPDATE game SET status = ? WHERE id = ?", g.Status, g.Id)
+		_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE id = ?", g.Status, time.Now(), g.Id)
 		return err
 	}
 
