@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fiveLettersHelper/internal/db"
+	dbUtils "fiveLettersHelper/internal/db"
 	"fiveLettersHelper/internal/game"
 	"fiveLettersHelper/internal/user"
 	wordsUtils "fiveLettersHelper/internal/words"
@@ -11,11 +11,16 @@ import (
 )
 
 func main() {
-	db, err := db.GetDB()
+	db, err := dbUtils.GetDB()
 	if err != nil {
 		log.Fatal("Can't open database:", err)
 	}
 	defer db.Close()
+
+	err = dbUtils.PrepareDB(db)
+	if err != nil {
+		log.Fatal("Error preparing DB:", err)
+	}
 
 	user, err := user.CreateAndGetCLIUser(db)
 	if err != nil {
@@ -71,6 +76,8 @@ func main() {
 			if err != nil {
 				log.Fatal("Error setting game status to 'complete':", err)
 			}
+
+			cliUtils.UserInput("Нажми ENTER, чтобы закрыть окно...")
 			break
 		}
 
