@@ -123,6 +123,7 @@ func (g *Game) FilterWords(words []string, db *sql.DB) (filteredWords []string, 
 				continue
 			}
 
+			// TODO: first collect inputs from all guesses, then filter words only once
 			if wordsUtils.WordRemains(word, unwantedLetters, letterPositions, amountOfLetters, wrongPositions) {
 				newWords = append(newWords, word)
 			}
