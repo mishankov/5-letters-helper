@@ -29,6 +29,8 @@ func main() {
 		log.Fatal("Error getting user:", err)
 	}
 
+	game.CancelAllGamesForUser(user.Id, db)
+
 	game, err := game.NewGame(user.Id, db)
 	if err != nil {
 		log.Fatal("Error creating new game:", err)
