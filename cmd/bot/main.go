@@ -35,9 +35,19 @@ func handleBot(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func handleGetDB(w http.ResponseWriter, req *http.Request) {
+	db, err := dbUtils.GetDBFile()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	w.Write(db)
+}
+
 func main() {
 	http.HandleFunc("/healthcheck", healthcheck)
 	http.HandleFunc(fmt.Sprintf("/bot/%v", config.BotSecret), handleBot)
+	http.HandleFunc(fmt.Sprintf("/get_db/%v", config.BotSecret), handleGetDB)
 
 	db, err := dbUtils.GetDB()
 	if err != nil {

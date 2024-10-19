@@ -2,12 +2,24 @@ package dbUtils
 
 import (
 	"database/sql"
+	"os"
 
 	_ "github.com/glebarez/go-sqlite"
 )
 
+const DB_PATH = "./fiveLettersHelper.db"
+
+func GetDBFile() ([]byte, error) {
+	data, err := os.ReadFile(DB_PATH)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	return data, nil
+}
+
 func GetDB() (*sql.DB, error) {
-	return sql.Open("sqlite", "./fiveLettersHelper.db")
+	return sql.Open("sqlite", DB_PATH)
 }
 
 func PrepareDB(db *sql.DB) error {
