@@ -52,6 +52,11 @@ func (g *Game) Cancel(db *sql.DB) error {
 	return nil
 }
 
+func CancelAllGamesForUser(user string, db *sql.DB) error {
+	_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE user = ? AND status IN (?, ?)", "canceled", time.Now(), user, "new", "in progress")
+	return err
+}
+
 func (g *Game) GetGuesses(db *sql.DB) ([]guess.Guess, error) {
 	return guess.GetGuesseForGame(g.Id, db)
 }

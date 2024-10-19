@@ -11,16 +11,16 @@ import (
 )
 
 type Commands struct {
-	start      string
-	newGame    string
-	cancelGame string
+	start       string
+	newGame     string
+	cancelGames string
 }
 
 func (c Commands) isCommand(s string) bool {
-	return slices.Contains([]string{c.start, c.newGame, c.cancelGame}, s)
+	return slices.Contains([]string{c.start, c.newGame, c.cancelGames}, s)
 }
 
-var commands = Commands{start: "/start", newGame: "/newgame", cancelGame: "/cancelgame"}
+var commands = Commands{start: "/start", newGame: "/newgame", cancelGames: "/cancelgames"}
 
 func handleTelegramUpdate(u telegram.Update) error {
 	db, err := dbUtils.GetDB()
@@ -47,8 +47,12 @@ func handleCommands(u telegram.Update, user user.User, db *sql.DB) error {
 	case commands.start:
 		// TODO: send greetings message
 	case commands.newGame:
+		game.CancelAllGamesForUser(user.Id, db)
 		game.NewGame(user.Id, db)
 		// TODO: send new game message
+	case commands.cancelGames:
+		game.CancelAllGamesForUser(user.Id, db)
+		// TOOD : send game cancelation message
 	}
 
 	return nil
