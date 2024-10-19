@@ -17,8 +17,17 @@ type Game struct {
 	Status string
 }
 
+type Status struct {
+	New        string
+	InProgress string
+	Cancelled  string
+	Completed  string
+}
+
+var status = Status{New: "new", InProgress: "in progress", Cancelled: "cancelled", Completed: "completed"}
+
 func NewGame(user string, db *sql.DB) (Game, error) {
-	game := Game{Id: uuid.NewString(), User: user, Status: "new"}
+	game := Game{Id: uuid.NewString(), User: user, Status: status.New}
 	_, err := db.Exec("INSERT INTO game (id, user, status, created) VALUES (?, ?, ?, ?)", game.Id, game.User, game.Status, time.Now())
 	if err != nil {
 		return Game{}, err
@@ -28,14 +37,14 @@ func NewGame(user string, db *sql.DB) (Game, error) {
 }
 
 func (g *Game) InProgress(db *sql.DB) error {
-	g.Status = "in progress"
+	g.Status = status.InProgress
 	_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE id = ?", g.Status, time.Now(), g.Id)
 	return err
 }
 
 func (g *Game) Complete(db *sql.DB) error {
-	if g.Status != "cancelled" && g.Status != "completed" {
-		g.Status = "completed"
+	if g.Status != status.Cancelled && g.Status != status.Completed {
+		g.Status = status.Completed
 		_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE id = ?", g.Status, time.Now(), g.Id)
 		return err
 	}
@@ -43,8 +52,8 @@ func (g *Game) Complete(db *sql.DB) error {
 }
 
 func (g *Game) Cancel(db *sql.DB) error {
-	if g.Status != "cancelled" && g.Status != "completed" {
-		g.Status = "canceled"
+	if g.Status != status.Cancelled && g.Status != status.Completed {
+		g.Status = status.Cancelled
 		_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE id = ?", g.Status, time.Now(), g.Id)
 		return err
 	}
@@ -53,7 +62,7 @@ func (g *Game) Cancel(db *sql.DB) error {
 }
 
 func CancelAllGamesForUser(user string, db *sql.DB) error {
-	_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE user = ? AND status IN (?, ?)", "canceled", time.Now(), user, "new", "in progress")
+	_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE user = ? AND status NOT IN (?, ?)", status.Cancelled, time.Now(), user, status.Completed, status.Cancelled)
 	return err
 }
 
