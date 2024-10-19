@@ -11,6 +11,9 @@ go run ./cmd/prepareDb
 
 # Запуск консольного приложения
 go run ./cmd/cli
+
+# Запуск бота
+go run ./cmd/bot
 ```
 
 
