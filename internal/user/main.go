@@ -2,6 +2,7 @@ package user
 
 import (
 	"database/sql"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -23,6 +24,16 @@ func NewCLIUser(db *sql.DB) (User, error) {
 	return user, nil
 }
 
+func NewTelegramUser(telegramId int, db *sql.DB) (User, error) {
+	user := User{Id: uuid.NewString(), Type: "telegram", Identifier: sql.NullString{String: strconv.Itoa(telegramId), Valid: true}}
+	_, err := db.Exec("INSERT INTO user (id, type, identifier, created) VALUES (?, ?, ?, ?)", user.Id, user.Type, user.Identifier, time.Now())
+	if err != nil {
+		return User{}, err
+	}
+
+	return user, nil
+}
+
 func CreateAndGetCLIUser(db *sql.DB) (User, error) {
 	row := db.QueryRow("SELECT id, type, identifier FROM user WHERE type = ?", "cli")
 
@@ -32,6 +43,22 @@ func CreateAndGetCLIUser(db *sql.DB) (User, error) {
 	switch {
 	case err == sql.ErrNoRows:
 		return NewCLIUser(db)
+	case err != nil:
+		return User{}, err
+	default:
+		return user, nil
+	}
+}
+
+func CreateAndGetTelegramUser(telegramId int, db *sql.DB) (User, error) {
+	row := db.QueryRow("SELECT id, type, identifier FROM user WHERE type = ? AND identifier = ?", "telegram", telegramId)
+
+	user := User{}
+
+	err := row.Scan(&user.Id, &user.Type, &user.Identifier)
+	switch {
+	case err == sql.ErrNoRows:
+		return NewTelegramUser(telegramId, db)
 	case err != nil:
 		return User{}, err
 	default:

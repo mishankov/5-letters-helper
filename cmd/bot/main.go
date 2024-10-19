@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fiveLettersHelper/internal/config"
+	"fiveLettersHelper/internal/dbUtils"
 	"fiveLettersHelper/internal/telegram"
 	"fmt"
 	"io"
@@ -37,6 +38,17 @@ func handleBot(w http.ResponseWriter, req *http.Request) {
 func main() {
 	http.HandleFunc("/healthcheck", healthcheck)
 	http.HandleFunc(fmt.Sprintf("/bot/%v", config.BotSecret), handleBot)
+
+	db, err := dbUtils.GetDB()
+	if err != nil {
+		log.Fatal("Can't open database:", err)
+	}
+	defer db.Close()
+
+	err = dbUtils.PrepareDB(db)
+	if err != nil {
+		log.Fatal("Error preparing DB:", err)
+	}
 
 	log.Printf("Starting server: http://localhost%v", config.Port)
 	http.ListenAndServe(config.Port, nil)

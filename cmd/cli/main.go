@@ -1,7 +1,7 @@
 package main
 
 import (
-	dbUtils "fiveLettersHelper/internal/db"
+	"fiveLettersHelper/internal/dbUtils"
 	"fiveLettersHelper/internal/game"
 	"fiveLettersHelper/internal/user"
 	wordsUtils "fiveLettersHelper/internal/words"
