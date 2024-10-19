@@ -7,7 +7,7 @@ import (
 )
 
 func GetDB() (*sql.DB, error) {
-	return sql.Open("sqlite", "./fiveLettersHelp.db")
+	return sql.Open("sqlite", "./fiveLettersHelper.db")
 }
 
 func PrepareDB(db *sql.DB) error {
