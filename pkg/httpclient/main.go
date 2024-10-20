@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -13,15 +14,20 @@ type Response struct {
 }
 
 func Post(url string, body any) (Response, error) {
+	log.Println("POST url:", url)
 	reqBody, err := json.Marshal(body)
 	if err != nil {
 		return Response{}, err
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBody))
+	log.Println("POST body:", string(reqBody))
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(string(reqBody))))
 	if err != nil {
 		return Response{}, err
 	}
+
+	req.Header.Add("Content-Type", "application/json")
 
 	client := http.Client{}
 
@@ -29,6 +35,7 @@ func Post(url string, body any) (Response, error) {
 	if err != nil {
 		return Response{}, err
 	}
+	defer resp.Body.Close()
 
 	resBody, err := io.ReadAll(resp.Body)
 	if err != nil {
