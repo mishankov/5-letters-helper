@@ -2,9 +2,11 @@ package main
 
 import (
 	"database/sql"
+	"fiveLettersHelper/internal/config"
 	"fiveLettersHelper/internal/dbUtils"
 	"fiveLettersHelper/internal/game"
 	"fiveLettersHelper/internal/telegram"
+	"fiveLettersHelper/internal/telegram/bot"
 	"fiveLettersHelper/internal/user"
 	"log"
 	"slices"
@@ -43,9 +45,11 @@ func handleTelegramUpdate(u telegram.Update) error {
 }
 
 func handleCommands(u telegram.Update, user user.User, db *sql.DB) error {
+	bot := bot.NewBot(config.BotSecret)
+
 	switch u.Message.Text {
 	case commands.start:
-		// TODO: send greetings message
+		bot.SendMessage(u.Message.Chat.Id, "Здравствуй странник")
 	case commands.newGame:
 		game.CancelAllGamesForUser(user.Id, db)
 		game.NewGame(user.Id, db)
