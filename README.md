@@ -13,7 +13,7 @@ go run ./cmd/prepareDb
 go run ./cmd/cli
 
 # Запуск бота
-go run ./cmd/bot
+set BOT_SECRET=<token> && go run ./cmd/bot
 ```
 
 ## Проблемные кейсы
