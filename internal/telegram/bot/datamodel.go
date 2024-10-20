@@ -1,6 +1,6 @@
 package bot
 
 type SendMessageRequest struct {
-	Chat_id int
-	Text    string
+	ChatId int    `json:"chat_id"`
+	Text   string `json:"text"`
 }

@@ -16,7 +16,7 @@ func NewBot(token string) Bot {
 }
 
 func (b Bot) SendMessage(chatId int, text string) error {
-	req := SendMessageRequest{Chat_id: chatId, Text: text}
+	req := SendMessageRequest{ChatId: chatId, Text: text}
 
 	resp, err := httpclient.Post(b.url+"/sendMessage", req)
 	if err != nil {
@@ -24,7 +24,7 @@ func (b Bot) SendMessage(chatId int, text string) error {
 	}
 
 	if !strings.HasPrefix(resp.Status, "2") {
-		log.Printf("Send message status: %v. Reponse body: %v\n", resp.Status, resp.Body)
+		log.Printf("Send message status: %v. Reponse body: %q\n", resp.Status, resp.Body)
 	}
 
 	return nil
