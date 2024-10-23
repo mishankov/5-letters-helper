@@ -129,24 +129,20 @@ func (g *Game) FilterWords(words []string, db *sql.DB) (filteredWords []string, 
 				unwantedLetters = unwantedLetters[:len(unwantedLetters)-1]
 			}
 		}
+	}
 
-		newWords := []string{}
-
-		for _, word := range words {
-			if len(word) == 0 {
-				continue
-			}
-
-			// TODO: first collect inputs from all guesses, then filter words only once
-			if wordsUtils.WordRemains(word, unwantedLetters, letterPositions, amountOfLetters, wrongPositions) {
-				newWords = append(newWords, word)
-			}
+	newWords := []string{}
+	for _, word := range words {
+		if len(word) == 0 {
+			continue
 		}
 
-		words = newWords
+		if wordsUtils.WordRemains(word, unwantedLetters, letterPositions, amountOfLetters, wrongPositions) {
+			newWords = append(newWords, word)
+		}
 	}
 
 	slices.Sort(unwantedLetters)
 
-	return words, FWAdditionalResults{LetterPositions: letterPositions, UnwantedLetters: unwantedLetters, WrongPositions: wrongPositions, AmountOfLetters: amountOfLetters}, nil
+	return newWords, FWAdditionalResults{LetterPositions: letterPositions, UnwantedLetters: unwantedLetters, WrongPositions: wrongPositions, AmountOfLetters: amountOfLetters}, nil
 }
