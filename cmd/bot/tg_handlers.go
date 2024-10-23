@@ -24,32 +24,32 @@ func (c Commands) isCommand(s string) bool {
 
 var commands = Commands{start: "/start", newGame: "/newgame", cancelGames: "/cancelgames"}
 
-func handleTelegramUpdate(u telegram.Update) error {
+func handleTelegramUpdate(update telegram.Update) error {
 	db, err := dbUtils.GetDB()
 	if err != nil {
 		log.Fatal("Can't open database:", err)
 	}
 	defer db.Close()
 
-	user, err := user.CreateAndGetTelegramUser(u.Message.From.Id, db)
+	user, err := user.CreateAndGetTelegramUser(update.Message.From.Id, db)
 	if err != nil {
 		log.Fatal("Can't create telegram user:", err)
 	}
 
+	bot := bot.NewBot(config.BotSecret)
+
 	switch {
-	case commands.isCommand(u.Message.Text):
-		return handleCommands(u, user, db)
+	case commands.isCommand(update.Message.Text):
+		return handleCommands(update, user, db, bot)
 	}
 
 	return nil
 }
 
-func handleCommands(u telegram.Update, user user.User, db *sql.DB) error {
-	bot := bot.NewBot(config.BotSecret)
-
-	switch u.Message.Text {
+func handleCommands(update telegram.Update, user user.User, db *sql.DB, bot bot.Botter) error {
+	switch update.Message.Text {
 	case commands.start:
-		bot.SendMessage(u.Message.Chat.Id, "Здравствуй странник")
+		bot.SendMessage(update.Message.Chat.Id, "Здравствуй странник")
 	case commands.newGame:
 		game.CancelAllGamesForUser(user.Id, db)
 		game.NewGame(user.Id, db)

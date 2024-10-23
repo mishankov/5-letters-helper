@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+type Botter interface {
+	SendMessage(chatId int, text string) error
+}
+
 type Bot struct {
 	Token string
 	url   string

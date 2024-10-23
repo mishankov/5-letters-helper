@@ -22,6 +22,10 @@ func GetDB() (*sql.DB, error) {
 	return sql.Open("sqlite", DB_PATH)
 }
 
+func GetTestDB() (*sql.DB, error) {
+	return sql.Open("sqlite", "testDB.db")
+}
+
 func PrepareDB(db *sql.DB) error {
 	sqlStmt := `
 CREATE TABLE IF NOT EXISTS "game" (
