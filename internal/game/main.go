@@ -22,9 +22,10 @@ type Status struct {
 	InProgress string
 	Cancelled  string
 	Completed  string
+	Failed     string
 }
 
-var status = Status{New: "new", InProgress: "in progress", Cancelled: "cancelled", Completed: "completed"}
+var status = Status{New: "new", InProgress: "in progress", Cancelled: "cancelled", Completed: "completed", Failed: "failed"}
 
 func NewGame(user string, db *sql.DB) (Game, error) {
 	game := Game{Id: uuid.NewString(), User: user, Status: status.New}
@@ -43,7 +44,7 @@ func (g *Game) InProgress(db *sql.DB) error {
 }
 
 func (g *Game) Complete(db *sql.DB) error {
-	if g.Status != status.Cancelled && g.Status != status.Completed {
+	if !g.StatusIsFinal() {
 		g.Status = status.Completed
 		_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE id = ?", g.Status, time.Now(), g.Id)
 		return err
@@ -52,13 +53,27 @@ func (g *Game) Complete(db *sql.DB) error {
 }
 
 func (g *Game) Cancel(db *sql.DB) error {
-	if g.Status != status.Cancelled && g.Status != status.Completed {
+	if !g.StatusIsFinal() {
 		g.Status = status.Cancelled
 		_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE id = ?", g.Status, time.Now(), g.Id)
 		return err
 	}
 
 	return nil
+}
+
+func (g *Game) Fail(db *sql.DB) error {
+	if !g.StatusIsFinal() {
+		g.Status = status.Failed
+		_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE id = ?", g.Status, time.Now(), g.Id)
+		return err
+	}
+
+	return nil
+}
+
+func (g *Game) StatusIsFinal() bool {
+	return slices.Contains([]string{status.Cancelled, status.Completed, status.Failed}, g.Status)
 }
 
 func CancelAllGamesForUser(user string, db *sql.DB) error {

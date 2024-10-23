@@ -115,7 +115,17 @@ func main() {
 			break
 		}
 
-		words = newWords
+		if len(newWords) == 0 {
+			fmt.Printf("Игра закончена. Не нашлось слов, удовлетворяющих условиям\n")
+			err = game.Fail(db)
+			if err != nil {
+				log.Fatal("Error setting game status to 'failed':", err)
+			}
+			cliutils.UserInput("Нажми ENTER, чтобы закрыть окно...")
+			break
+		}
+
+		words = wordsUtils.GetFirstNWords(wordsUtils.RankWords(newWords), len(newWords))
 
 		fmt.Printf("Осталось %v слов для выбора. Первые из них: %v\n", len(words), cliutils.FormatListWithSeparator(words[:min(len(words), 10)], ", "))
 		fmt.Printf("Известные положения букв: %v\n", cliutils.FormatListWithSeparator(additionalResults.LetterPositions, " "))
