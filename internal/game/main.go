@@ -96,7 +96,7 @@ type FWAdditionalResults struct {
 	AmountOfLetters map[rune]int
 }
 
-func (g *Game) FilterWords(words []string, guesses []guess.Guess) (filteredWords []string, additionalResults FWAdditionalResults, error error) {
+func FilterWords(words []string, guesses []guess.Guess) (filteredWords []string, additionalResults FWAdditionalResults, error error) {
 	letterPositions := []rune{'_', '_', '_', '_', '_'}
 	unwantedLetters := []rune{}
 	wrongPositions := map[int][]rune{}

@@ -31,7 +31,7 @@ func main() {
 
 	game.CancelAllGamesForUser(user.Id, db)
 
-	game, err := game.NewGame(user.Id, db)
+	currentGame, err := game.NewGame(user.Id, db)
 	if err != nil {
 		log.Fatal("Error creating new game:", err)
 	}
@@ -42,7 +42,7 @@ func main() {
 		log.Fatal("Error getting words from file:", err)
 	}
 
-	err = game.InProgress(db)
+	err = currentGame.InProgress(db)
 	if err != nil {
 		log.Fatal("Error setting game status to 'in progress':", err)
 	}
@@ -94,12 +94,12 @@ func main() {
 			ok = true
 		}
 
-		_, err = game.NewGuess(turnNumber, word, result, db)
+		_, err = currentGame.NewGuess(turnNumber, word, result, db)
 		if err != nil {
 			log.Fatal("Error creating guess:", err)
 		}
 
-		guesses, err := game.GetGuesses(db)
+		guesses, err := currentGame.GetGuesses(db)
 		if err != nil {
 			log.Fatal("Error getting guesses for game:", err)
 		}
@@ -111,7 +111,7 @@ func main() {
 
 		if len(newWords) == 1 {
 			fmt.Printf("Игра закончена. Загаданное слово: %v\n", newWords[0])
-			err = game.Complete(db)
+			err = currentGame.Complete(db)
 			if err != nil {
 				log.Fatal("Error setting game status to 'complete':", err)
 			}
@@ -122,7 +122,7 @@ func main() {
 
 		if len(newWords) == 0 {
 			fmt.Printf("Игра закончена. Не нашлось слов, удовлетворяющих условиям\n")
-			err = game.Fail(db)
+			err = currentGame.Fail(db)
 			if err != nil {
 				log.Fatal("Error setting game status to 'failed':", err)
 			}
@@ -137,7 +137,7 @@ func main() {
 		fmt.Printf("Неиспользуемые буквы: %v\n", cliutils.FormatListWithSeparator(additionalResults.UnwantedLetters, ", "))
 	}
 
-	err = game.Cancel(db)
+	err = currentGame.Cancel(db)
 	if err != nil {
 		log.Fatal("Error setting game status to 'cancel':", err)
 	}
