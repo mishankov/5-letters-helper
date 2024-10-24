@@ -99,7 +99,12 @@ func main() {
 			log.Fatal("Error creating guess:", err)
 		}
 
-		newWords, additionalResults, err := game.FilterWords(words, db)
+		guesses, err := game.GetGuesses(db)
+		if err != nil {
+			log.Fatal("Error getting guesses for game:", err)
+		}
+
+		newWords, additionalResults, err := game.FilterWords(words, guesses)
 		if err != nil {
 			log.Fatal("Error filtering words:", err)
 		}
