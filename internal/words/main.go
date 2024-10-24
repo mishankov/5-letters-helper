@@ -55,15 +55,15 @@ func WordRemains(word string, unwantedLetters []rune, letterPositions []rune, am
 }
 
 type WordScore struct {
-	word  string
-	score int
+	Word  string
+	Score int
 }
 
 func GetFirstNWords(ws []WordScore, n int) []string {
 	result := []string{}
 
 	for i, w := range ws {
-		result = append(result, w.word)
+		result = append(result, w.Word)
 
 		if i == n-1 {
 			return result
@@ -74,7 +74,7 @@ func GetFirstNWords(ws []WordScore, n int) []string {
 	return result
 }
 
-func RankWords(words []string) []WordScore {
+func RankWords(words []string, order int) []WordScore {
 	lettersCount := map[rune]int{}
 
 	for _, word := range words {
@@ -96,16 +96,16 @@ func RankWords(words []string) []WordScore {
 			}
 		}
 
-		wordScores = append(wordScores, WordScore{word: word, score: score})
+		wordScores = append(wordScores, WordScore{Word: word, Score: score})
 	}
 
 	slices.SortFunc(wordScores, func(w1, w2 WordScore) int {
-		if w1.score < w2.score {
-			return 1
+		if w1.Score < w2.Score {
+			return order
 		}
 
-		if w1.score > w2.score {
-			return -1
+		if w1.Score > w2.Score {
+			return -order
 		}
 
 		return 0

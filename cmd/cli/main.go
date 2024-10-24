@@ -125,7 +125,7 @@ func main() {
 			break
 		}
 
-		words = wordsUtils.GetFirstNWords(wordsUtils.RankWords(newWords), len(newWords))
+		words = wordsUtils.GetFirstNWords(wordsUtils.RankWords(newWords, 1), len(newWords))
 
 		fmt.Printf("Осталось %v слов для выбора. Первые из них: %v\n", len(words), cliutils.FormatListWithSeparator(words[:min(len(words), 10)], ", "))
 		fmt.Printf("Известные положения букв: %v\n", cliutils.FormatListWithSeparator(additionalResults.LetterPositions, " "))
