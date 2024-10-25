@@ -92,6 +92,7 @@ func (g *Game) NewGuess(number int, word string, result string, db *sql.DB) (gue
 type FWAdditionalResults struct {
 	LetterPositions []rune
 	UnwantedLetters []rune
+	UnwantedWords   []string
 	WrongPositions  map[int][]rune
 	AmountOfLetters map[rune]int
 }
@@ -99,11 +100,16 @@ type FWAdditionalResults struct {
 func FilterWords(words []string, guesses []guess.Guess) (filteredWords []string, additionalResults FWAdditionalResults, error error) {
 	letterPositions := []rune{'_', '_', '_', '_', '_'}
 	unwantedLetters := []rune{}
+	unwantedWords := []string{}
 	wrongPositions := map[int][]rune{}
 	amountOfLetters := map[rune]int{}
 
 	for _, guess := range guesses {
 		localAmountOfLetters := map[rune]int{}
+
+		if guess.Result != "22222" {
+			unwantedWords = append(unwantedWords, guess.Word)
+		}
 		for i := 0; i < 5; i++ {
 			currentResult := []rune(guess.Result)[i]
 			currentLetter := []rune(guess.Word)[i]
@@ -118,6 +124,7 @@ func FilterWords(words []string, guesses []guess.Guess) (filteredWords []string,
 				wrongPositions[i] = append(wrongPositions[i], currentLetter)
 			case '2':
 				letterPositions[i] = currentLetter
+				localAmountOfLetters[currentLetter] += 1
 			default:
 				log.Fatal("Unexpected result rune: ", string(currentResult))
 			}
@@ -125,7 +132,7 @@ func FilterWords(words []string, guesses []guess.Guess) (filteredWords []string,
 
 		for letter, localAmount := range localAmountOfLetters {
 			amount, ok := amountOfLetters[letter]
-			if ok && amount < localAmount || !ok {
+			if (ok && amount < localAmount) || !ok {
 				amountOfLetters[letter] = localAmount
 			}
 		}
@@ -147,12 +154,12 @@ func FilterWords(words []string, guesses []guess.Guess) (filteredWords []string,
 			continue
 		}
 
-		if wordsUtils.WordRemains(word, unwantedLetters, letterPositions, amountOfLetters, wrongPositions) {
+		if wordsUtils.WordRemains(word, unwantedLetters, unwantedWords, letterPositions, amountOfLetters, wrongPositions) {
 			newWords = append(newWords, word)
 		}
 	}
 
 	slices.Sort(unwantedLetters)
 
-	return newWords, FWAdditionalResults{LetterPositions: letterPositions, UnwantedLetters: unwantedLetters, WrongPositions: wrongPositions, AmountOfLetters: amountOfLetters}, nil
+	return newWords, FWAdditionalResults{LetterPositions: letterPositions, UnwantedLetters: unwantedLetters, UnwantedWords: unwantedWords, WrongPositions: wrongPositions, AmountOfLetters: amountOfLetters}, nil
 }

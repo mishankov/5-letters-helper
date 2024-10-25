@@ -24,7 +24,11 @@ func GetFiveLettersWords() ([]string, error) {
 	return strings.Split(string(originalData), "\r\n"), nil
 }
 
-func WordRemains(word string, unwantedLetters []rune, letterPositions []rune, amountOfLetters map[rune]int, wrongPositions map[int][]rune) bool {
+func WordRemains(word string, unwantedLetters []rune, unwantedWords []string, letterPositions []rune, amountOfLetters map[rune]int, wrongPositions map[int][]rune) bool {
+	if slices.Contains(unwantedWords, word) {
+		return false
+	}
+
 	for _, letter := range unwantedLetters {
 		if strings.ContainsRune(word, letter) {
 			return false
