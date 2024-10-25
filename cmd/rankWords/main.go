@@ -15,7 +15,7 @@ func main() {
 		log.Fatal("Error getting words:", err)
 	}
 
-	for _, order := range []int{1} {
+	for _, order := range []int{-1, 1} {
 		totalAmount := 0
 
 		for _, targetWord := range fiveLettersWords {
@@ -27,12 +27,14 @@ func main() {
 			for status != "22222" {
 				amount++
 
+				if len(remainigVariants) == 0 {
+					break
+				}
+
 				guessWord := remainigVariants[0].Word
 				status = game.GetWordStatus(guessWord, targetWord)
 
 				guesses = append(guesses, guess.Guess{Word: guessWord, Result: status})
-
-				log.Println(targetWord, guessWord, status, len(remainigVariants))
 
 				onlyWords, _, _ := game.FilterWords(words.GetFirstNWords(remainigVariants, len(remainigVariants)), guesses)
 				remainigVariants = words.RankWords(onlyWords, order)
