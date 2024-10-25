@@ -37,6 +37,15 @@ func TestFilterWords(t *testing.T) {
 			},
 			result: []string{"каска"},
 		},
+		{
+			name:  "армяк-взмыв-мямля",
+			words: []string{"армяк", "взмыв", "мямля"},
+			guesses: []guess.Guess{
+				{Word: "взмыв", Result: "00200"},
+				{Word: "мямля", Result: "01200"},
+			},
+			result: []string{"армяк"},
+		},
 	}
 
 	for _, test := range tests {
