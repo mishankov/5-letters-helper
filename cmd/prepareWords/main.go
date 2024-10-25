@@ -15,7 +15,7 @@ func main() {
 
 	var fiveLettersWords string
 	for _, word := range words {
-		if len([]rune(word)) == 5 {
+		if len([]rune(word)) == 5 && word != "хи-хи" {
 			fiveLettersWords = fiveLettersWords + word + "\r\n"
 		}
 	}
