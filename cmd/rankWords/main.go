@@ -28,6 +28,7 @@ func main() {
 				amount++
 
 				if len(remainigVariants) == 0 {
+					log.Println(order, targetWord)
 					break
 				}
 
