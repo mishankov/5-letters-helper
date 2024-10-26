@@ -51,6 +51,7 @@ func main() {
 	for {
 		turnNumber++
 		fmt.Printf("Ход №: %v\n", turnNumber)
+		fmt.Printf("Осталось %v слов для выбора. Первые из них: %v\n", len(words), cliutils.FormatListWithSeparator(wordsUtils.GetFirstNWords(wordsUtils.RankWords(words, 1), 10), ", "))
 
 		var word string
 		for ok := false; !ok; {
@@ -132,7 +133,6 @@ func main() {
 
 		words = wordsUtils.GetFirstNWords(wordsUtils.RankWords(newWords, 1), len(newWords))
 
-		fmt.Printf("Осталось %v слов для выбора. Первые из них: %v\n", len(words), cliutils.FormatListWithSeparator(words[:min(len(words), 10)], ", "))
 		fmt.Printf("Известные положения букв: %v\n", cliutils.FormatListWithSeparator(additionalResults.LetterPositions, " "))
 		fmt.Printf("Неиспользуемые буквы: %v\n", cliutils.FormatListWithSeparator(additionalResults.UnwantedLetters, ", "))
 	}
