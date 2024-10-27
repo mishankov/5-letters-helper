@@ -116,6 +116,7 @@ func FilterWords(words []string, guesses []guess.Guess) (filteredWords []string,
 		if guess.Result != "22222" {
 			unwantedWords = append(unwantedWords, guess.Word)
 		}
+
 		for i := 0; i < 5; i++ {
 			currentResult := []rune(guess.Result)[i]
 			currentLetter := []rune(guess.Word)[i]
@@ -143,13 +144,18 @@ func FilterWords(words []string, guesses []guess.Guess) (filteredWords []string,
 			}
 		}
 
-		for i, letter := range unwantedLetters {
+		for _, letter := range unwantedLetters {
 			if _, ok := amountOfLetters[letter]; ok || slices.Contains(letterPositions, letter) {
-				if i < len(unwantedLetters) {
-					unwantedLetters[i] = unwantedLetters[len(unwantedLetters)-1]
+				logger.Debugf("Letter %q is in amountOfLetters or letterPositions so it must be deleted from unwantedLetters %q", letter, unwantedLetters)
+				// Need to recalculate this, because after unwantedLetters shrink, index of loop is no more valid letter position in unwantedLetters
+				currentLetterIndex := slices.Index(unwantedLetters, letter)
+				if currentLetterIndex < len(unwantedLetters) {
+					unwantedLetters[currentLetterIndex] = unwantedLetters[len(unwantedLetters)-1]
 				}
 
 				unwantedLetters = unwantedLetters[:len(unwantedLetters)-1]
+
+				logger.Debugf("unwantedLetters after deletion of letter %q: %q", letter, unwantedLetters)
 			}
 		}
 	}

@@ -1,10 +1,13 @@
 package words
 
 import (
+	"fiveLettersHelper/pkg/logging"
 	"os"
 	"slices"
 	"strings"
 )
+
+var logger = logging.NewLogger("words")
 
 func GetAllWords() ([]string, error) {
 	originalData, err := os.ReadFile("./data/russian_nouns.txt")
@@ -25,24 +28,32 @@ func GetFiveLettersWords() ([]string, error) {
 }
 
 func WordRemains(word string, unwantedLetters []rune, unwantedWords []string, letterPositions []rune, amountOfLetters map[rune]int, wrongPositions map[int][]rune) bool {
+	logger := logging.NewLoggerFromParent("WordRemains", &logger)
+
+	logger.Debugf("Word: %v", word)
+
 	if slices.Contains(unwantedWords, word) {
+		logger.Debug("Is in unwanted words")
 		return false
 	}
 
 	for _, letter := range unwantedLetters {
 		if strings.ContainsRune(word, letter) {
+			logger.Debugf("Has unwanted letter %q", letter)
 			return false
 		}
 	}
 
 	for index, letter := range letterPositions {
 		if letter != '_' && []rune(word)[index] != letter {
+			logger.Debugf("Does not have letter %q at position %v", letter, index)
 			return false
 		}
 	}
 
 	for letter, amount := range amountOfLetters {
 		if strings.Count(word, string(letter)) < amount {
+			logger.Debugf("Does not have %v amount of letter %q", amount, letter)
 			return false
 		}
 	}
@@ -50,11 +61,13 @@ func WordRemains(word string, unwantedLetters []rune, unwantedWords []string, le
 	for position, letters := range wrongPositions {
 		for _, letter := range letters {
 			if []rune(word)[position] == letter {
+				logger.Debugf("Has letter %q at known wrong position %v", letter, position)
 				return false
 			}
 		}
 	}
 
+	logger.Debug("Remains")
 	return true
 }
 

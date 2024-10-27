@@ -9,7 +9,8 @@ import (
 )
 
 type Logger struct {
-	name   string
+	name string
+	// logLevel LogLevel
 	parent *Logger
 }
 

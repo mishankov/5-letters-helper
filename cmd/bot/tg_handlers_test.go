@@ -5,21 +5,17 @@ import (
 	"fiveLettersHelper/internal/dbUtils"
 	"fiveLettersHelper/internal/telegram"
 	"fiveLettersHelper/internal/user"
-	"fiveLettersHelper/pkg/logging"
 	"fmt"
 	"log"
 	"os"
 	"testing"
 )
 
-var testLogger = logging.NewLogger("tg_handlers_test")
-
 type FakeBot struct {
 }
 
 func (fb FakeBot) SendMessage(chatId int, text string) error {
-	logger := logging.NewLoggerFromParent("SendMessage", &testLogger)
-	logger.Debugf("Message sent to %v: %q", chatId, text)
+	log.Printf("Message sent to %v: %q", chatId, text)
 	return nil
 }
 
