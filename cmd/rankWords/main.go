@@ -18,7 +18,8 @@ func main() {
 		logger.Fatalf("Error getting words: %v", err)
 	}
 
-	for _, order := range []int{-1, 1} {
+	for _, order := range []int{1, -1} {
+		logger.Infof("Start with order %v", order)
 		totalAmount := 0
 
 		for _, targetWord := range fiveLettersWords {

@@ -9,17 +9,21 @@ import (
 )
 
 type Logger struct {
-	name string
-	// logLevel LogLevel
-	parent *Logger
+	name     string
+	logLevel LogLevel
+	parent   *Logger
 }
 
 func NewLogger(name string) Logger {
-	return Logger{name: name}
+	l := Logger{name: name}
+	l.logLevel = l.GetLogLevelFromEnv()
+	return l
 }
 
 func NewLoggerFromParent(name string, parent *Logger) Logger {
-	return Logger{name: name, parent: parent}
+	l := Logger{name: name, parent: parent}
+	l.logLevel = l.GetLogLevelFromEnv()
+	return l
 }
 
 func (l *Logger) FullLoggerName() string {
@@ -67,7 +71,7 @@ func (l *Logger) GetLogLevelFromEnv() LogLevel {
 }
 
 func (l *Logger) ShouldWriteLog(logLevel LogLevel) bool {
-	return logLevel.level >= l.GetLogLevelFromEnv().level
+	return logLevel.level >= l.logLevel.level
 }
 
 type LogLevel struct {
