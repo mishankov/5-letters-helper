@@ -101,44 +101,62 @@ func (l *Logger) Logf(logLevel LogLevel, message string, a ...any) {
 }
 
 func (l *Logger) Log(logLevel LogLevel, message any) {
-	if l.ShouldWriteLog(logLevel) {
-		fmt.Printf("[%v] [%v] [%v] - %v\n", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.FullLoggerName(), logLevel.name, message)
-	}
+	fmt.Printf("[%v] [%v] [%v] - %v\n", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.FullLoggerName(), logLevel.name, message)
 }
 
 func (l *Logger) Debug(message any) {
-	l.Log(logLevels.Debug, message)
+	if l.ShouldWriteLog(logLevels.Debug) {
+		l.Log(logLevels.Debug, message)
+	}
 }
 func (l *Logger) Debugf(message string, a ...any) {
-	l.Logf(logLevels.Debug, message, a...)
+	if l.ShouldWriteLog(logLevels.Debug) {
+		l.Logf(logLevels.Debug, message, a...)
+	}
 }
 
 func (l *Logger) Info(message any) {
-	l.Log(logLevels.Info, message)
+	if l.ShouldWriteLog(logLevels.Info) {
+		l.Log(logLevels.Info, message)
+	}
 }
 func (l *Logger) Infof(message string, a ...any) {
-	l.Logf(logLevels.Info, message, a...)
+	if l.ShouldWriteLog(logLevels.Info) {
+		l.Logf(logLevels.Info, message, a...)
+	}
 }
 
 func (l *Logger) Warn(message any) {
-	l.Log(logLevels.Warn, message)
+	if l.ShouldWriteLog(logLevels.Warn) {
+		l.Log(logLevels.Warn, message)
+	}
 }
 func (l *Logger) Warnf(message string, a ...any) {
-	l.Logf(logLevels.Warn, message, a...)
+	if l.ShouldWriteLog(logLevels.Warn) {
+		l.Logf(logLevels.Warn, message, a...)
+	}
 }
 
 func (l *Logger) Error(message any) {
-	l.Log(logLevels.Error, message)
+	if l.ShouldWriteLog(logLevels.Error) {
+		l.Log(logLevels.Error, message)
+	}
 }
 func (l *Logger) Errorf(message string, a ...any) {
-	l.Logf(logLevels.Error, message, a...)
+	if l.ShouldWriteLog(logLevels.Error) {
+		l.Logf(logLevels.Error, message, a...)
+	}
 }
 
 func (l *Logger) Fatal(message any) {
-	l.Log(logLevels.Fatal, message)
+	if l.ShouldWriteLog(logLevels.Fatal) {
+		l.Log(logLevels.Fatal, message)
+	}
 	os.Exit(1)
 }
 func (l *Logger) Fatalf(message string, a ...any) {
-	l.Logf(logLevels.Fatal, message, a...)
+	if l.ShouldWriteLog(logLevels.Fatal) {
+		l.Logf(logLevels.Fatal, message, a...)
+	}
 	os.Exit(1)
 }
