@@ -4,15 +4,18 @@ import (
 	"fiveLettersHelper/internal/game"
 	"fiveLettersHelper/internal/guess"
 	"fiveLettersHelper/internal/words"
-	"log"
+	"fiveLettersHelper/pkg/logging"
 )
+
+var logger = logging.NewLogger("rankWords")
 
 // TODO: which is better: higher or lower score? Test for every word, which is faster
 // TODO: which is better: overall or remaining words score? Test for every word, which is faster
 func main() {
+	var logger = logging.NewLoggerFromParent("main", &logger)
 	fiveLettersWords, err := words.GetFiveLettersWords()
 	if err != nil {
-		log.Fatal("Error getting words:", err)
+		logger.Fatalf("Error getting words: %v", err)
 	}
 
 	for _, order := range []int{-1, 1} {
@@ -28,7 +31,7 @@ func main() {
 				amount++
 
 				if len(remainigVariants) == 0 {
-					log.Println(order, targetWord)
+					logger.Infof("No remaining variants for order %v, target %v", order, targetWord)
 					break
 				}
 
@@ -44,10 +47,10 @@ func main() {
 			totalAmount += amount
 		}
 
-		log.Printf("%v %v\n", order, totalAmount)
+		logger.Infof("%v %v\n", order, totalAmount)
 	}
 
 	wordScores := words.RankWords(fiveLettersWords, -1)
 
-	log.Println(words.GetFirstNWords(wordScores, 10))
+	logger.Info(words.GetFirstNWords(wordScores, 10))
 }

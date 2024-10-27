@@ -5,12 +5,15 @@ import (
 	"fiveLettersHelper/internal/config"
 	"fiveLettersHelper/internal/dbUtils"
 	"fiveLettersHelper/internal/telegram"
+	"fiveLettersHelper/pkg/logging"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"time"
 )
+
+var logger = logging.NewLogger("bot")
 
 func healthcheck(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "Time: %v", time.Now())
@@ -45,21 +48,23 @@ func handleGetDB(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	logger := logging.NewLoggerFromParent("main", &logger)
+
 	http.HandleFunc("/healthcheck", healthcheck)
 	http.HandleFunc(fmt.Sprintf("/bot/%v", config.BotSecret), handleBot)
 	http.HandleFunc(fmt.Sprintf("/get_db/%v", config.BotSecret), handleGetDB)
 
 	db, err := dbUtils.GetDB()
 	if err != nil {
-		log.Fatal("Can't open database:", err)
+		logger.Fatalf("Can't open database: %v", err)
 	}
 	defer db.Close()
 
 	err = dbUtils.PrepareDB(db)
 	if err != nil {
-		log.Fatal("Error preparing DB:", err)
+		logger.Fatalf("Error preparing DB: %v", err)
 	}
 
-	log.Printf("Starting server: http://localhost%v", config.Port)
+	logger.Infof("Starting server: http://localhost%v", config.Port)
 	http.ListenAndServe(config.Port, nil)
 }

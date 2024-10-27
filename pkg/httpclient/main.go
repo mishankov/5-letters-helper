@@ -3,10 +3,12 @@ package httpclient
 import (
 	"bytes"
 	"encoding/json"
+	"fiveLettersHelper/pkg/logging"
 	"io"
-	"log"
 	"net/http"
 )
+
+var logger = logging.NewLogger("httpclient")
 
 type Response struct {
 	Status string
@@ -14,13 +16,14 @@ type Response struct {
 }
 
 func Post(url string, body any) (Response, error) {
-	log.Println("POST url:", url)
+	logger := logging.NewLoggerFromParent("Post", &logger)
+	logger.Debugf("POST url: %v", url)
 	reqBody, err := json.Marshal(body)
 	if err != nil {
 		return Response{}, err
 	}
 
-	log.Println("POST body:", string(reqBody))
+	logger.Debugf("POST body: %v", string(reqBody))
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(string(reqBody))))
 	if err != nil {

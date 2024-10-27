@@ -4,12 +4,15 @@ import (
 	"database/sql"
 	"fiveLettersHelper/internal/guess"
 	wordsUtils "fiveLettersHelper/internal/words"
+	"fiveLettersHelper/pkg/logging"
 	"log"
 	"slices"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+var logger = logging.NewLogger("game")
 
 type Game struct {
 	Id     string
@@ -98,6 +101,8 @@ type FWAdditionalResults struct {
 }
 
 func FilterWords(words []string, guesses []guess.Guess) (filteredWords []string, additionalResults FWAdditionalResults, error error) {
+	logger := logging.NewLoggerFromParent("FilterWords", &logger)
+
 	letterPositions := []rune{'_', '_', '_', '_', '_'}
 	unwantedLetters := []rune{}
 	unwantedWords := []string{}
@@ -105,6 +110,7 @@ func FilterWords(words []string, guesses []guess.Guess) (filteredWords []string,
 	amountOfLetters := map[rune]int{}
 
 	for _, guess := range guesses {
+		logger.Debugf("Current guess %v - %v", guess.Word, guess.Result)
 		localAmountOfLetters := map[rune]int{}
 
 		if guess.Result != "22222" {
@@ -155,6 +161,7 @@ func FilterWords(words []string, guesses []guess.Guess) (filteredWords []string,
 		}
 
 		if wordsUtils.WordRemains(word, unwantedLetters, unwantedWords, letterPositions, amountOfLetters, wrongPositions) {
+			logger.Debugf("Word remains %v", word)
 			newWords = append(newWords, word)
 		}
 	}

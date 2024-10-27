@@ -2,9 +2,11 @@ package bot
 
 import (
 	"fiveLettersHelper/pkg/httpclient"
-	"log"
+	"fiveLettersHelper/pkg/logging"
 	"strings"
 )
+
+var logger = logging.NewLogger("telegram_bot")
 
 type Botter interface {
 	SendMessage(chatId int, text string) error
@@ -20,6 +22,8 @@ func NewBot(token string) Bot {
 }
 
 func (b Bot) SendMessage(chatId int, text string) error {
+	logger := logging.NewLoggerFromParent("SendMessage", &logger)
+
 	req := SendMessageRequest{ChatId: chatId, Text: text}
 
 	resp, err := httpclient.Post(b.url+"/sendMessage", req)
@@ -28,7 +32,7 @@ func (b Bot) SendMessage(chatId int, text string) error {
 	}
 
 	if !strings.HasPrefix(resp.Status, "2") {
-		log.Printf("Send message status: %v. Reponse body: %q\n", resp.Status, resp.Body)
+		logger.Infof("Send message status: %v. Reponse body: %q", resp.Status, resp.Body)
 	}
 
 	return nil

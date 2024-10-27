@@ -1,19 +1,8 @@
 package config
 
 import (
-	"os"
-	"strings"
+	"github.com/mishankov/go-utlz/cliutils"
 )
 
-func envOrDefault(key, def string) string {
-	value := os.Getenv(key)
-
-	if len(value) == 0 {
-		return def
-	} else {
-		return strings.TrimSpace(value)
-	}
-}
-
-var BotSecret = envOrDefault("BOT_SECRET", "secret")
-var Port = envOrDefault("PORT", ":4444")
+var BotSecret = cliutils.GetEnvOrDefault("BOT_SECRET", "secret")
+var Port = cliutils.GetEnvOrDefault("PORT", ":4444")
