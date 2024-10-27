@@ -19,7 +19,7 @@ type FakeBot struct {
 
 func (fb FakeBot) SendMessage(chatId int, text string) error {
 	logger := logging.NewLoggerFromParent("SendMessage", &testLogger)
-	logger.Infof("Message sent to %v: %q", chatId, text)
+	logger.Debugf("Message sent to %v: %q", chatId, text)
 	return nil
 }
 
