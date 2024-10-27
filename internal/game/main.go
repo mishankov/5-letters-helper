@@ -101,7 +101,7 @@ type FWAdditionalResults struct {
 }
 
 func FilterWords(words []string, guesses []guess.Guess) (filteredWords []string, additionalResults FWAdditionalResults, error error) {
-	logger := logging.NewLoggerFromParent("FilterWords", &logger)
+	// logger := logging.NewLoggerFromParent("FilterWords", &logger)
 
 	letterPositions := []rune{'_', '_', '_', '_', '_'}
 	unwantedLetters := []rune{}

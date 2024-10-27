@@ -16,7 +16,7 @@ type Response struct {
 }
 
 func Post(url string, body any) (Response, error) {
-	logger := logging.NewLoggerFromParent("Post", &logger)
+	// logger := logging.NewLoggerFromParent("Post", &logger)
 	logger.Debugf("POST url: %v", url)
 	reqBody, err := json.Marshal(body)
 	if err != nil {

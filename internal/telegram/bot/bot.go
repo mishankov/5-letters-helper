@@ -22,7 +22,7 @@ func NewBot(token string) Bot {
 }
 
 func (b Bot) SendMessage(chatId int, text string) error {
-	logger := logging.NewLoggerFromParent("SendMessage", &logger)
+	// logger := logging.NewLoggerFromParent("SendMessage", &logger)
 
 	req := SendMessageRequest{ChatId: chatId, Text: text}
 

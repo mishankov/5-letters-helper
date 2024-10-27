@@ -48,7 +48,7 @@ func handleGetDB(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	logger := logging.NewLoggerFromParent("main", &logger)
+	// logger := logging.NewLoggerFromParent("main", &logger)
 
 	http.HandleFunc("/healthcheck", healthcheck)
 	http.HandleFunc(fmt.Sprintf("/bot/%v", config.BotSecret), handleBot)

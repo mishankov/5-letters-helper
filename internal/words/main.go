@@ -28,7 +28,7 @@ func GetFiveLettersWords() ([]string, error) {
 }
 
 func WordRemains(word string, unwantedLetters []rune, unwantedWords []string, letterPositions []rune, amountOfLetters map[rune]int, wrongPositions map[int][]rune) bool {
-	logger := logging.NewLoggerFromParent("WordRemains", &logger)
+	// logger := logging.NewLoggerFromParent("WordRemains", &logger)
 
 	logger.Debugf("Word: %v", word)
 
