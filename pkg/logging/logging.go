@@ -9,8 +9,6 @@ import (
 	"github.com/mishankov/go-utlz/cliutils"
 )
 
-// TODO: try this approach for loggers - https://go.dev/play/p/YkEN5mmbRld
-
 type Logger struct {
 	name     string
 	logLevel LogLevel
@@ -30,18 +28,20 @@ func NewLoggerFromParent(name string, parent *Logger) Logger {
 }
 
 func (l *Logger) FullLoggerName() string {
-	// if l.parent == nil {
-	// 	return l.name
-	// }
+	if l.parent == nil {
+		return l.name
+	}
 
-	// return l.parent.FullLoggerName() + "." + l.name
+	return l.parent.FullLoggerName() + "." + l.name
+}
 
+func (l *Logger) CallLocation() string {
 	pc := make([]uintptr, 15)
-	n := runtime.Callers(5, pc)
+	n := runtime.Callers(4, pc)
 	frames := runtime.CallersFrames(pc[:n])
 	frame, _ := frames.Next()
 
-	return fmt.Sprintf("%s:%d %s", frame.File, frame.Line, frame.Function)
+	return frame.Function
 }
 
 func (l *Logger) GetLogLevelFromEnv() LogLevel {
@@ -107,11 +107,11 @@ var logLevels LogLevels = LogLevels{
 
 func (l *Logger) Logf(logLevel LogLevel, message string, a ...any) {
 	message = fmt.Sprintf(message, a...)
-	l.Log(logLevel, message)
+	fmt.Printf("[%s] [%s] [%s] [%s] - %s\n", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.CallLocation(), l.FullLoggerName(), logLevel.name, message)
 }
 
 func (l *Logger) Log(logLevel LogLevel, message any) {
-	fmt.Printf("[%s] [%s] [%s] - %s\n", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.FullLoggerName(), logLevel.name, message)
+	fmt.Printf("[%s] [%s] [%s] [%s] - %s\n", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.CallLocation(), l.FullLoggerName(), logLevel.name, message)
 }
 
 func (l *Logger) Debug(message any) {
