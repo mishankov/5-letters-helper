@@ -110,13 +110,16 @@ func (l *Logger) Logf(logLevel LogLevel, message string, a ...any) {
 	fmt.Printf("[%s] [%s] [%s] [%s] - %s\n", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.CallLocation(), l.FullLoggerName(), logLevel.name, message)
 }
 
-func (l *Logger) Log(logLevel LogLevel, message any) {
-	fmt.Printf("[%s] [%s] [%s] [%s] - %s\n", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.CallLocation(), l.FullLoggerName(), logLevel.name, message)
+func (l *Logger) Log(logLevel LogLevel, message ...any) {
+	prefix := fmt.Sprintf("[%s] [%s] [%s] [%s] - ", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.CallLocation(), l.FullLoggerName(), logLevel.name)
+	fmt.Print(prefix)
+	fmt.Println(message...)
+	// fmt.Printf("[%s] [%s] [%s] [%s] - %s\n", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.CallLocation(), l.FullLoggerName(), logLevel.name, message)
 }
 
-func (l *Logger) Debug(message any) {
+func (l *Logger) Debug(message ...any) {
 	if l.ShouldWriteLog(logLevels.Debug) {
-		l.Log(logLevels.Debug, message)
+		l.Log(logLevels.Debug, message...)
 	}
 }
 func (l *Logger) Debugf(message string, a ...any) {
@@ -125,9 +128,9 @@ func (l *Logger) Debugf(message string, a ...any) {
 	}
 }
 
-func (l *Logger) Info(message any) {
+func (l *Logger) Info(message ...any) {
 	if l.ShouldWriteLog(logLevels.Info) {
-		l.Log(logLevels.Info, message)
+		l.Log(logLevels.Info, message...)
 	}
 }
 func (l *Logger) Infof(message string, a ...any) {
@@ -136,9 +139,9 @@ func (l *Logger) Infof(message string, a ...any) {
 	}
 }
 
-func (l *Logger) Warn(message any) {
+func (l *Logger) Warn(message ...any) {
 	if l.ShouldWriteLog(logLevels.Warn) {
-		l.Log(logLevels.Warn, message)
+		l.Log(logLevels.Warn, message...)
 	}
 }
 func (l *Logger) Warnf(message string, a ...any) {
@@ -147,9 +150,9 @@ func (l *Logger) Warnf(message string, a ...any) {
 	}
 }
 
-func (l *Logger) Error(message any) {
+func (l *Logger) Error(message ...any) {
 	if l.ShouldWriteLog(logLevels.Error) {
-		l.Log(logLevels.Error, message)
+		l.Log(logLevels.Error, message...)
 	}
 }
 func (l *Logger) Errorf(message string, a ...any) {
@@ -158,9 +161,9 @@ func (l *Logger) Errorf(message string, a ...any) {
 	}
 }
 
-func (l *Logger) Fatal(message any) {
+func (l *Logger) Fatal(message ...any) {
 	if l.ShouldWriteLog(logLevels.Fatal) {
-		l.Log(logLevels.Fatal, message)
+		l.Log(logLevels.Fatal, message...)
 	}
 	os.Exit(1)
 }
