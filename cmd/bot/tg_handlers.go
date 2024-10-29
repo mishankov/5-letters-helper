@@ -49,15 +49,45 @@ func handleTelegramUpdate(update telegram.Update) error {
 func handleCommands(update telegram.Update, user user.User, db *sql.DB, bot bot.Botter) error {
 	switch update.Message.Text {
 	case commands.start:
-		bot.SendMessage(update.Message.Chat.Id, "Здравствуй странник")
+		err := bot.SendMessage(update.Message.Chat.Id, greetingMessage(update.Message.From.Username))
+		if err != nil {
+			return err
+		}
 	case commands.newGame:
-		game.CancelAllGamesForUser(user.Id, db)
-		game.NewGame(user.Id, db)
-		// TODO: send new game message
+		err := game.CancelAllGamesForUser(user.Id, db)
+		if err != nil {
+			return err
+		}
+
+		_, err = game.NewGame(user.Id, db)
+		if err != nil {
+			return err
+		}
+
+		err = bot.SendMessage(update.Message.Chat.Id, newGameMessage())
+		if err != nil {
+			return err
+		}
+
+		err = handleCurrentGameState(update, user, db, bot)
+		if err != nil {
+			return err
+		}
 	case commands.cancelGames:
-		game.CancelAllGamesForUser(user.Id, db)
-		// TOOD : send game cancelation message
+		err := game.CancelAllGamesForUser(user.Id, db)
+		if err != nil {
+			return err
+		}
+
+		err = bot.SendMessage(update.Message.Chat.Id, cancelGameMessage())
+		if err != nil {
+			return err
+		}
 	}
 
+	return nil
+}
+
+func handleCurrentGameState(update telegram.Update, user user.User, db *sql.DB, bot bot.Botter) error {
 	return nil
 }
