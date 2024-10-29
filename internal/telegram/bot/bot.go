@@ -32,7 +32,7 @@ func (b Bot) SendMessage(chatId int, text string) error {
 	}
 
 	if !strings.HasPrefix(resp.Status, "2") {
-		logger.Infof("Send message status: %v. Reponse body: %q", resp.Status, resp.Body)
+		logger.Warnf("Send message status: %v. Reponse body: %q", resp.Status, resp.Body)
 	}
 
 	return nil

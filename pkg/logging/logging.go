@@ -111,6 +111,7 @@ func (l *Logger) Logf(logLevel LogLevel, message string, a ...any) {
 }
 
 func (l *Logger) Log(logLevel LogLevel, message ...any) {
+	// TODO: got to do something better
 	prefix := fmt.Sprintf("[%s] [%s] [%s] [%s] - ", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.CallLocation(), l.FullLoggerName(), logLevel.name)
 	fmt.Print(prefix)
 	fmt.Println(message...)

@@ -17,3 +17,7 @@ func newGameMessage() string {
 func cancelGameMessage() string {
 	return "Игра завершена!"
 }
+
+func errorHappendMessage() string {
+	return "Что-то пошло не так! Мы уже знаем об этом и пытаемся что-то сделать"
+}

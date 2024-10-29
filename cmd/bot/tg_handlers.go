@@ -27,12 +27,14 @@ func handleTelegramUpdate(update telegram.Update) error {
 	db, err := dbUtils.GetDB()
 	if err != nil {
 		logger.Error("Can't open database:", err)
+		return err
 	}
 	defer db.Close()
 
 	user, err := user.CreateAndGetTelegramUser(update.Message.From.Id, db)
 	if err != nil {
 		logger.Error("Can't create telegram user:", err)
+		return err
 	}
 
 	bot := bot.NewBot(config.BotSecret)
@@ -88,5 +90,14 @@ func handleCommands(update telegram.Update, user user.User, db *sql.DB, bot bot.
 }
 
 func handleCurrentGameState(update telegram.Update, user user.User, db *sql.DB, bot bot.Botter) error {
+	// get latest game
+	// get latest game guesses
+
+	// if no guesses, create first one, and ask for first word
+
+	// if has guesses, check last
+	// if has no word, process update for word
+	// else if has no result, process update for result
+
 	return nil
 }
