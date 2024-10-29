@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"log"
-	"os"
 )
 
 type FakeBot struct {
@@ -12,14 +10,6 @@ type FakeBot struct {
 func (fb FakeBot) SendMessage(chatId int, text string) error {
 	log.Printf("Message sent to %v: %q", chatId, text)
 	return nil
-}
-
-func caprureOutput(f func()) string {
-	var buf bytes.Buffer
-	log.SetOutput(&buf)
-	f()
-	log.SetOutput(os.Stderr)
-	return buf.String()
 }
 
 // func TestHandleCommands(t *testing.T) {

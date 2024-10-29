@@ -22,19 +22,19 @@ func healthcheck(w http.ResponseWriter, req *http.Request) {
 func handleBot(w http.ResponseWriter, req *http.Request) {
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		log.Fatal(err)
+		logger.Error(err)
 	}
 
 	var update telegram.Update
 
 	err = json.Unmarshal(body, &update)
 	if err != nil {
-		log.Fatal(err)
+		logger.Error(err)
 	}
 
 	err = handleTelegramUpdate(update)
 	if err != nil {
-		log.Fatal(err)
+		logger.Error(err)
 	}
 }
 

@@ -8,7 +8,6 @@ import (
 	"fiveLettersHelper/internal/telegram"
 	"fiveLettersHelper/internal/telegram/bot"
 	"fiveLettersHelper/internal/user"
-	"log"
 	"slices"
 )
 
@@ -27,13 +26,13 @@ var commands = Commands{start: "/start", newGame: "/newgame", cancelGames: "/can
 func handleTelegramUpdate(update telegram.Update) error {
 	db, err := dbUtils.GetDB()
 	if err != nil {
-		log.Fatal("Can't open database:", err)
+		logger.Error("Can't open database:", err)
 	}
 	defer db.Close()
 
 	user, err := user.CreateAndGetTelegramUser(update.Message.From.Id, db)
 	if err != nil {
-		log.Fatal("Can't create telegram user:", err)
+		logger.Error("Can't create telegram user:", err)
 	}
 
 	bot := bot.NewBot(config.BotSecret)
