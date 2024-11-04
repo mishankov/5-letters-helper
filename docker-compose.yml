@@ -5,6 +5,6 @@ services:
     build: .
     restart: unless-stopped
     environment:
-      - BOT_TOKEN=${BOT_TOKEN}
+      - BOT_SECRET=${BOT_SECRET}
     ports:
       - "4444:4444"

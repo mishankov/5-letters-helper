@@ -67,5 +67,6 @@ func main() {
 	}
 
 	logger.Infof("Starting server: http://localhost%v", config.Port)
+	logger.Infof("Bot token:", config.BotSecret)
 	http.ListenAndServe(config.Port, nil)
 }
