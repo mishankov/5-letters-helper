@@ -15,7 +15,7 @@ func GetAllWords() ([]string, error) {
 		return []string{}, err
 	}
 
-	return strings.Split(string(originalData), "\r\n"), nil
+	return strings.Split(string(originalData), "\n"), nil
 }
 
 func GetFiveLettersWords() ([]string, error) {
@@ -24,7 +24,7 @@ func GetFiveLettersWords() ([]string, error) {
 		return []string{}, err
 	}
 
-	return strings.Split(string(originalData), "\r\n"), nil
+	return strings.Split(string(originalData), "\n"), nil
 }
 
 func WordRemains(word string, unwantedLetters []rune, unwantedWords []string, letterPositions []rune, amountOfLetters map[rune]int, wrongPositions map[int][]rune) bool {
