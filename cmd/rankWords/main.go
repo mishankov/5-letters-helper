@@ -9,8 +9,6 @@ import (
 
 var logger = logging.NewLogger("rankWords")
 
-// TODO: which is better: higher or lower score? Test for every word, which is faster
-// TODO: which is better: overall or remaining words score? Test for every word, which is faster
 func main() {
 	var logger = logging.NewLoggerFromParent("main", &logger)
 	fiveLettersWords, err := words.GetFiveLettersWords()
