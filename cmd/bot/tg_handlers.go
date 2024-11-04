@@ -11,6 +11,7 @@ import (
 	"fiveLettersHelper/internal/user"
 	"fiveLettersHelper/internal/words"
 	"slices"
+	"strings"
 )
 
 type Commands struct {
@@ -148,7 +149,7 @@ func handleCurrentGameState(update telegram.Update, user user.User, db *sql.DB, 
 	lastGuess := guesses[len(guesses)-1]
 
 	if lastGuess.Word == "" {
-		word := update.Message.Text
+		word := strings.ToLower(update.Message.Text)
 
 		if len([]rune(word)) != 5 {
 			bot.SendMessage(update.Message.Chat.Id, invalidWord(word))
@@ -241,7 +242,7 @@ func handleCurrentGameState(update telegram.Update, user user.User, db *sql.DB, 
 
 		filteredWords = words.GetFirstNWords(words.RankWords(filteredWords, 1), 10)
 
-		guess, err := guess.NewEmptyGuess(latestGame.Id, 1, db)
+		guess, err := guess.NewEmptyGuess(latestGame.Id, lastGuess.Number+1, db)
 		if err != nil {
 			logger.Error("Error creating new guess:", err)
 			return err
