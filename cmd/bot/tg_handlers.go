@@ -138,9 +138,9 @@ func handleCurrentGameState(update telegram.Update, user user.User, db *sql.DB, 
 		}
 
 		wordsAmount := len(allWords)
-		allWords = words.GetFirstNWords(words.RankWords(allWords, 1), 10)
+		wordsCutted := words.GetFirstNWords(words.RankWords(allWords, 1), 10)
 
-		bot.SendMessage(update.Message.Chat.Id, newRoundInfo(guess.Number, wordsAmount, allWords))
+		bot.SendMessage(update.Message.Chat.Id, newRoundInfo(guess.Number, wordsAmount, wordsCutted))
 		bot.SendMessage(update.Message.Chat.Id, askForWord())
 
 		return nil
