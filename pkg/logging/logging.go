@@ -107,12 +107,12 @@ var logLevels LogLevels = LogLevels{
 
 func (l *Logger) Logf(logLevel LogLevel, message string, a ...any) {
 	message = fmt.Sprintf(message, a...)
-	fmt.Printf("[%s] [%s] [%s] [%s] - %s\n", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.CallLocation(), l.FullLoggerName(), logLevel.name, message)
+	fmt.Printf("[%s] [%s] [%s] [%s] - %s\n", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.FullLoggerName(), l.CallLocation(), logLevel.name, message)
 }
 
 func (l *Logger) Log(logLevel LogLevel, message ...any) {
 	// TODO: got to do something better
-	prefix := fmt.Sprintf("[%s] [%s] [%s] [%s] - ", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.CallLocation(), l.FullLoggerName(), logLevel.name)
+	prefix := fmt.Sprintf("[%s] [%s] [%s] [%s] - ", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.FullLoggerName(), l.CallLocation(), logLevel.name)
 	fmt.Print(prefix)
 	fmt.Println(message...)
 	// fmt.Printf("[%s] [%s] [%s] [%s] - %s\n", time.Now().Format("2006-01-02 15:04:05 GMT-0700"), l.CallLocation(), l.FullLoggerName(), logLevel.name, message)

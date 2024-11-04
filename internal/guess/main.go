@@ -25,7 +25,17 @@ func NewGuess(game string, number int, word string, result string, db *sql.DB) (
 	return guess, nil
 }
 
-func GetGuesseForGame(game string, db *sql.DB) ([]Guess, error) {
+func NewEmptyGuess(game string, number int, db *sql.DB) (Guess, error) {
+	guess := Guess{Id: uuid.NewString(), Game: game, Number: number}
+	_, err := db.Exec("INSERT INTO guess (id, game, number, created) VALUES (?, ?, ?, ?)", guess.Id, guess.Game, guess.Number, time.Now())
+	if err != nil {
+		return Guess{}, err
+	}
+
+	return guess, nil
+}
+
+func GetGuessesForGame(game string, db *sql.DB) ([]Guess, error) {
 	guesses := []Guess{}
 
 	rows, err := db.Query("SELECT id, game, number, word, result FROM guess WHERE game = ? ORDER BY number", game)
@@ -36,11 +46,27 @@ func GetGuesseForGame(game string, db *sql.DB) ([]Guess, error) {
 
 	for rows.Next() {
 		guess := Guess{}
-		if err := rows.Scan(&guess.Id, &guess.Game, &guess.Number, &guess.Word, &guess.Result); err != nil {
+		word := sql.NullString{}
+		result := sql.NullString{}
+		if err := rows.Scan(&guess.Id, &guess.Game, &guess.Number, &word, &result); err != nil {
 			return []Guess{}, err
 		}
+
+		guess.Word = word.String
+		guess.Result = result.String
+
 		guesses = append(guesses, guess)
 	}
 
 	return guesses, nil
+}
+
+func (g *Guess) AddWord(word string, db *sql.DB) error {
+	_, err := db.Exec("UPDATE guess SET word = ?, updated = ? WHERE id = ?", word, time.Now(), g.Id)
+	return err
+}
+
+func (g *Guess) AddResult(result string, db *sql.DB) error {
+	_, err := db.Exec("UPDATE guess SET result = ?, updated = ? WHERE id = ?", result, time.Now(), g.Id)
+	return err
 }

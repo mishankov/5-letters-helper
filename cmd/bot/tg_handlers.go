@@ -5,9 +5,11 @@ import (
 	"fiveLettersHelper/internal/config"
 	"fiveLettersHelper/internal/dbUtils"
 	"fiveLettersHelper/internal/game"
+	"fiveLettersHelper/internal/guess"
 	"fiveLettersHelper/internal/telegram"
 	"fiveLettersHelper/internal/telegram/bot"
 	"fiveLettersHelper/internal/user"
+	"fiveLettersHelper/internal/words"
 	"slices"
 )
 
@@ -41,7 +43,15 @@ func handleTelegramUpdate(update telegram.Update) error {
 
 	switch {
 	case commands.isCommand(update.Message.Text):
-		return handleCommands(update, user, db, bot)
+		err := handleCommands(update, user, db, bot)
+		if err != nil {
+			bot.SendMessage(update.Message.Chat.Id, errorHappendMessage())
+		}
+	default:
+		err := handleCurrentGameState(update, user, db, bot)
+		if err != nil {
+			bot.SendMessage(update.Message.Chat.Id, errorHappendMessage())
+		}
 	}
 
 	return nil
@@ -90,14 +100,150 @@ func handleCommands(update telegram.Update, user user.User, db *sql.DB, bot bot.
 }
 
 func handleCurrentGameState(update telegram.Update, user user.User, db *sql.DB, bot bot.Botter) error {
-	// get latest game
-	// get latest game guesses
+	latestGame, err := game.GetLatestGameGorUser(user.Id, db)
+	if err != nil {
+		logger.Error("Error getting latest game for user:", err)
+		return err
+	}
 
-	// if no guesses, create first one, and ask for first word
+	if latestGame.Id == "" {
+		logger.Warn("User did not started game manualy. Creating game")
+		latestGame, err = game.NewGame(user.Id, db)
+		if err != nil {
+			logger.Error("Error creating new game for user:", err)
+			return err
+		}
+	}
 
-	// if has guesses, check last
-	// if has no word, process update for word
-	// else if has no result, process update for result
+	guesses, err := latestGame.GetGuesses(db)
+	if err != nil {
+		logger.Error("Error getting latest game guesses:", err)
+		return err
+	}
+
+	if len(guesses) == 0 {
+		logger.Warn("No guesses founded for game")
+		guess, err := guess.NewEmptyGuess(latestGame.Id, 1, db)
+		if err != nil {
+			logger.Error("Error creating new guess:", err)
+			return err
+		}
+
+		allWords, err := words.GetFiveLettersWords()
+		if err != nil {
+			logger.Error("Error getting words:", err)
+			return err
+		}
+
+		wordsAmount := len(allWords)
+		allWords = words.GetFirstNWords(words.RankWords(allWords, 1), 10)
+
+		bot.SendMessage(update.Message.Chat.Id, newRoundInfo(guess.Number, wordsAmount, allWords))
+		bot.SendMessage(update.Message.Chat.Id, askForWord())
+
+		return nil
+	}
+	lastGuess := guesses[len(guesses)-1]
+
+	if lastGuess.Word == "" {
+		word := update.Message.Text
+
+		if len([]rune(word)) != 5 {
+			bot.SendMessage(update.Message.Chat.Id, invalidWord(word))
+			bot.SendMessage(update.Message.Chat.Id, askForWord())
+
+			return nil
+		} else {
+			err := lastGuess.AddWord(word, db)
+			if err != nil {
+				logger.Error("Error adding word to guess:", err)
+				return err
+			}
+
+			bot.SendMessage(update.Message.Chat.Id, askForResult())
+
+			return nil
+		}
+	}
+
+	if lastGuess.Result == "" {
+		result := update.Message.Text
+
+		if len([]rune(result)) != 5 {
+			bot.SendMessage(update.Message.Chat.Id, invalidResultLen(result))
+			bot.SendMessage(update.Message.Chat.Id, askForResult())
+			return nil
+		}
+
+		for i, r := range result {
+			if !slices.Contains([]rune{'0', '1', '2'}, r) {
+				bot.SendMessage(update.Message.Chat.Id, invalidResultContent(i+1, r))
+				bot.SendMessage(update.Message.Chat.Id, askForResult())
+				return nil
+			}
+		}
+
+		err := lastGuess.AddResult(result, db)
+		if err != nil {
+			logger.Error("Error adding resilt to guess:", err)
+		}
+
+		guesses, err := latestGame.GetGuesses(db)
+		if err != nil {
+			logger.Error("Error getting guesses for game:", err)
+			return err
+		}
+
+		allWords, err := words.GetFiveLettersWords()
+		if err != nil {
+			logger.Error("Error getting words:", err)
+			return err
+		}
+
+		filteredWords, _, err := game.FilterWords(allWords, guesses)
+		if err != nil {
+			logger.Error("Error filtering words:", err)
+			return err
+		}
+
+		guess, err := guess.NewEmptyGuess(latestGame.Id, 1, db)
+		if err != nil {
+			logger.Error("Error creating new guess:", err)
+			return err
+		}
+
+		wordsAmount := len(filteredWords)
+		if wordsAmount == 1 {
+			err := latestGame.Complete(db)
+			if err != nil {
+				logger.Error("Error completing game:", err)
+				return err
+			}
+
+			bot.SendMessage(update.Message.Chat.Id, gameCompleted(filteredWords[0]))
+
+			return nil
+		}
+
+		if wordsAmount == 0 {
+			err := latestGame.Fail(db)
+			if err != nil {
+				logger.Error("Error failing game:", err)
+				return err
+			}
+
+			bot.SendMessage(update.Message.Chat.Id, gameFailed())
+
+			return nil
+		}
+
+		filteredWords = words.GetFirstNWords(words.RankWords(filteredWords, 1), 10)
+
+		bot.SendMessage(update.Message.Chat.Id, newRoundInfo(guess.Number, wordsAmount, filteredWords))
+		bot.SendMessage(update.Message.Chat.Id, askForWord())
+
+		return nil
+	}
 
 	return nil
 }

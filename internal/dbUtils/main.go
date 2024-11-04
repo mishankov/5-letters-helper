@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS "guess" (
 	"word" TEXT,
 	"result" TEXT,
 	"created" TEXT,
+	"updated" TEXT,
 	PRIMARY KEY("id"),
 	FOREIGN KEY ("game") REFERENCES "game"("id")
 	ON UPDATE NO ACTION ON DELETE NO ACTION

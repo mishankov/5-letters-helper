@@ -32,10 +32,7 @@ func handleBot(w http.ResponseWriter, req *http.Request) {
 		logger.Error(err)
 	}
 
-	err = handleTelegramUpdate(update)
-	if err != nil {
-		logger.Error(err)
-	}
+	handleTelegramUpdate(update)
 }
 
 func handleGetDB(w http.ResponseWriter, req *http.Request) {

@@ -40,6 +40,25 @@ func NewGame(user string, db *sql.DB) (Game, error) {
 	return game, nil
 }
 
+func GetLatestGameGorUser(user string, db *sql.DB) (Game, error) {
+	rows, err := db.Query("SELECT id, user, status FROM game WHERE user = ? ORDER BY updated DESC", user)
+	if err != nil {
+		return Game{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		game := Game{}
+		if err := rows.Scan(&game.Id, &game.User, &game.Status); err != nil {
+			return Game{}, err
+		}
+
+		return game, nil
+	}
+
+	return Game{}, nil
+}
+
 func (g *Game) InProgress(db *sql.DB) error {
 	g.Status = status.InProgress
 	_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE id = ?", g.Status, time.Now(), g.Id)
@@ -85,7 +104,7 @@ func CancelAllGamesForUser(user string, db *sql.DB) error {
 }
 
 func (g *Game) GetGuesses(db *sql.DB) ([]guess.Guess, error) {
-	return guess.GetGuesseForGame(g.Id, db)
+	return guess.GetGuessesForGame(g.Id, db)
 }
 
 func (g *Game) NewGuess(number int, word string, result string, db *sql.DB) (guess.Guess, error) {
