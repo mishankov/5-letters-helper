@@ -41,7 +41,7 @@ func NewGame(user string, db *sql.DB) (Game, error) {
 }
 
 func GetLatestGameGorUser(user string, db *sql.DB) (Game, error) {
-	rows, err := db.Query("SELECT id, user, status FROM game WHERE user = ? ORDER BY updated DESC", user)
+	rows, err := db.Query("SELECT id, user, status FROM game WHERE user = ? ORDER BY created DESC", user)
 	if err != nil {
 		return Game{}, err
 	}
@@ -66,6 +66,7 @@ func (g *Game) InProgress(db *sql.DB) error {
 }
 
 func (g *Game) Complete(db *sql.DB) error {
+	logger.Debugf("Completing game %v. Current status %v", g.Id, g.Status)
 	if !g.StatusIsFinal() {
 		g.Status = status.Completed
 		_, err := db.Exec("UPDATE game SET status = ?, updated = ? WHERE id = ?", g.Status, time.Now(), g.Id)

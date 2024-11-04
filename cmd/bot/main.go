@@ -20,10 +20,13 @@ func healthcheck(w http.ResponseWriter, req *http.Request) {
 }
 
 func handleBot(w http.ResponseWriter, req *http.Request) {
+	logger.Debug("Bot request handle begin")
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		logger.Error(err)
 	}
+
+	logger.Debug("Bot request body:", string(body))
 
 	var update telegram.Update
 
@@ -33,6 +36,7 @@ func handleBot(w http.ResponseWriter, req *http.Request) {
 	}
 
 	handleTelegramUpdate(update)
+	logger.Debug("Bot request handle end")
 }
 
 func handleGetDB(w http.ResponseWriter, req *http.Request) {

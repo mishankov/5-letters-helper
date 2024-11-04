@@ -100,6 +100,7 @@ func handleCommands(update telegram.Update, user user.User, db *sql.DB, bot bot.
 }
 
 func handleCurrentGameState(update telegram.Update, user user.User, db *sql.DB, bot bot.Botter) error {
+	logger.Debug("handleCurrentGameState begin")
 	latestGame, err := game.GetLatestGameGorUser(user.Id, db)
 	if err != nil {
 		logger.Error("Error getting latest game for user:", err)
@@ -114,6 +115,7 @@ func handleCurrentGameState(update telegram.Update, user user.User, db *sql.DB, 
 			return err
 		}
 	}
+	logger.Debug("Latest game id:", latestGame.Id)
 
 	guesses, err := latestGame.GetGuesses(db)
 	if err != nil {
@@ -157,6 +159,12 @@ func handleCurrentGameState(update telegram.Update, user user.User, db *sql.DB, 
 			err := lastGuess.AddWord(word, db)
 			if err != nil {
 				logger.Error("Error adding word to guess:", err)
+				return err
+			}
+
+			err = latestGame.InProgress(db)
+			if err != nil {
+				logger.Error("Error inprogressing game:", err)
 				return err
 			}
 
@@ -206,12 +214,6 @@ func handleCurrentGameState(update telegram.Update, user user.User, db *sql.DB, 
 			return err
 		}
 
-		guess, err := guess.NewEmptyGuess(latestGame.Id, 1, db)
-		if err != nil {
-			logger.Error("Error creating new guess:", err)
-			return err
-		}
-
 		wordsAmount := len(filteredWords)
 		if wordsAmount == 1 {
 			err := latestGame.Complete(db)
@@ -238,6 +240,12 @@ func handleCurrentGameState(update telegram.Update, user user.User, db *sql.DB, 
 		}
 
 		filteredWords = words.GetFirstNWords(words.RankWords(filteredWords, 1), 10)
+
+		guess, err := guess.NewEmptyGuess(latestGame.Id, 1, db)
+		if err != nil {
+			logger.Error("Error creating new guess:", err)
+			return err
+		}
 
 		bot.SendMessage(update.Message.Chat.Id, newRoundInfo(guess.Number, wordsAmount, filteredWords))
 		bot.SendMessage(update.Message.Chat.Id, askForWord())
