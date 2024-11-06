@@ -7,7 +7,7 @@ import (
 	_ "github.com/glebarez/go-sqlite"
 )
 
-const DB_PATH = "./fiveLettersHelper.db"
+const DB_PATH = "./db/fiveLettersHelper.db"
 
 func GetDBFile() ([]byte, error) {
 	data, err := os.ReadFile(DB_PATH)

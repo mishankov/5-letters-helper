@@ -4,8 +4,8 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o bot ./cmd/bot
 
 FROM alpine:latest
-WORKDIR /
-COPY --from=build /app/bot /bot
-COPY ./data /data
+WORKDIR /app
+COPY --from=build /app/bot /app/bot
+COPY ./data /app/data
 EXPOSE 4444
-ENTRYPOINT ["/bot"]
+ENTRYPOINT ["/app/bot"]

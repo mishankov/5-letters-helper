@@ -7,3 +7,5 @@ services:
     restart: unless-stopped
     ports:
       - "4444:4444"
+    volumes:
+      - "./container_data/db:/app/db"

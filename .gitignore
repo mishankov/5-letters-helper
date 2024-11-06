@@ -1,3 +1,4 @@
 *.db
 *.exe
 .env
+container_data
