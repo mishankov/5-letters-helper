@@ -1,13 +1,11 @@
 FROM golang:1.23 as build
 WORKDIR /app
 COPY . .
-RUN go build -o bot ./cmd/bot
-EXPOSE 4444
-CMD ["/app/bot"]
+RUN CGO_ENABLED=0 GOOS=linux go build -o bot ./cmd/bot
 
-# FROM alpine:latest
-# COPY --from=build /app/bot /bot
-# RUN chmod +x /bot
-# COPY ./data /data
-# EXPOSE 4444
-# CMD ["/bot"]
+FROM alpine:latest
+WORKDIR /
+COPY --from=build /app/bot /bot
+COPY ./data /data
+EXPOSE 4444
+ENTRYPOINT ["/bot"]
