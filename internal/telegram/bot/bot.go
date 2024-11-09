@@ -24,7 +24,7 @@ func NewBot(token string) Bot {
 func (b Bot) SendMessage(chatId int, text string) error {
 	// logger := logging.NewLoggerFromParent("SendMessage", &logger)
 
-	req := SendMessageRequest{ChatId: chatId, Text: text, ParseMode: "MarkdownV2"}
+	req := SendMessageRequest{ChatId: chatId, Text: text, ParseMode: "Markdown"}
 
 	resp, err := httpclient.Post(b.url+"/sendMessage", req)
 	if err != nil {
