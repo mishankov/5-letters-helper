@@ -30,9 +30,9 @@ func newRoundInfo(roundNumber int, remainingWordsAmount int, wordsToShow []strin
 	var wordsString string
 
 	if remainingWordsAmount >= len(wordsToShow) {
-		wordsString = fmt.Sprintf("Осталось %v слов. Первые %v из них: %v", remainingWordsAmount, len(wordsToShow), cliutils.FormatListWithSeparator(wordsToShow, ", "))
+		wordsString = fmt.Sprintf("Осталось %v слов. Первые %v из них: %v", remainingWordsAmount, len(wordsToShow), "`"+cliutils.FormatListWithSeparator(wordsToShow, "`, `")+"`")
 	} else {
-		wordsString = fmt.Sprintf("Осталось %v слов: %v", remainingWordsAmount, cliutils.FormatListWithSeparator(wordsToShow, ", "))
+		wordsString = fmt.Sprintf("Осталось %v слов: %v", remainingWordsAmount, "`"+cliutils.FormatListWithSeparator(wordsToShow, "`, `")+"`")
 	}
 
 	return fmt.Sprintf("Ход №%v\n%v", roundNumber, wordsString)
